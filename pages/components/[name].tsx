@@ -1,6 +1,6 @@
 import * as React from 'react'
-import path from 'path'
-import { promises as fs } from 'fs'
+// import path from 'path'
+// import { promises as fs } from 'fs'
 import { getMDXComponent } from 'mdx-bundler/client'
 import { capitalCase } from 'case-anything'
 
@@ -19,13 +19,13 @@ export default function Component({ name }) {
 }
 
 export async function getServerSideProps(context) {
-  const mdxSource = await fs.readFile(
-    path.resolve(
-      process.cwd(),
-      `components/${capitalCase(context.query.name)}/README.mdx`
-    ),
-    'utf-8'
-  )
+  //   const mdxSource = await fs.readFile(
+  //     path.resolve(
+  //       process.cwd(),
+  //       `components/${capitalCase(context.query.name)}/README.mdx`
+  //     ),
+  //     'utf-8'
+  //   )
   return {
     props: { name: capitalCase(context.query.name) },
   }
