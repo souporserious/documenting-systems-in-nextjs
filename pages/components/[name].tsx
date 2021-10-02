@@ -1,18 +1,24 @@
 import * as React from 'react'
 import path from 'path'
 import { promises as fs } from 'fs'
-import { bundleMDX } from 'mdx-bundler'
 import { getMDXComponent } from 'mdx-bundler/client'
 import { capitalCase } from 'case-anything'
-import { VM } from 'vm2'
 
-export default function Component({ code }) {
-  const Element = React.useMemo(() => getMDXComponent(code), [code])
-  return <Element />
+export default function Component({ name }) {
+  const [, forceUpdate] = React.useReducer((x) => x + 1, 0)
+  const element = React.useRef(null)
+  React.useEffect(() => {
+    fetch(`/api/code?component=${name}`)
+      .then((response) => response.text())
+      .then((code) => {
+        element.current = getMDXComponent(code)
+        forceUpdate()
+      })
+  }, [])
+  return element.current ? React.createElement(element.current) : null
 }
 
 export async function getServerSideProps(context) {
-  const vm = new VM()
   const mdxSource = await fs.readFile(
     path.resolve(
       process.cwd(),
@@ -20,8 +26,7 @@ export async function getServerSideProps(context) {
     ),
     'utf-8'
   )
-  const { code } = await bundleMDX(mdxSource, {})
   return {
-    props: { code },
+    props: { name: capitalCase(context.query.name) },
   }
 }
