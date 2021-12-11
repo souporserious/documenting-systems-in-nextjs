@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 export function Box({
   as: Element = 'div',
   padding,
