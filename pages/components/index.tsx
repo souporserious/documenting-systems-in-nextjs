@@ -4,8 +4,7 @@ import { getComponents } from 'utils'
 export default function Components({ components }) {
   return (
     <div>
-      <h1>Design System</h1>
-      <h2>Components</h2>
+      <h1>Components</h1>
       {components.map(({ name, slug }) => (
         <Link key={name} href={`components/${slug}`} passHref>
           <a style={{ display: 'flex', fontSize: 32, padding: 16 }}>{name}</a>
