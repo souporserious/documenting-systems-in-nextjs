@@ -5,4 +5,8 @@ const componentsDirectory = path.resolve(process.cwd(), './components')
 
 export default withRemoteRefresh({
   paths: [componentsDirectory],
-})()
+})({
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+})
