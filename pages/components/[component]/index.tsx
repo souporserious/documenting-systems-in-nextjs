@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { useComponent } from 'hooks'
 import {
   getComponents,
-  getExamples,
+  getComponentExamples,
   getComponentReadme,
   getComponentDocs,
 } from 'utils'
@@ -92,7 +92,7 @@ export async function getStaticProps({ params }) {
   const readme = await getComponentReadme(params.component)
   const docs = await getComponentDocs(params.component)
   const allComponents = await getComponents()
-  const allExamples = await getExamples()
+  const allExamples = await getComponentExamples()
   const component = allComponents.find(
     (component) => component.slug === params.component
   )

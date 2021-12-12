@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button } from 'system'
+import { Box, Button } from 'components'
 
 export default function BasicUsage() {
   return (
