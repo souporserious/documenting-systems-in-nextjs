@@ -1,3 +1,5 @@
 export * from './get-component'
 export * from './get-component-readme'
 export * from './get-pages'
+export * from './get-editor-link'
+export * from './transform-code'

@@ -1,12 +1,16 @@
 import * as React from 'react'
 import { useComponent } from 'hooks'
-import { getExamples } from 'utils'
+import { getExamples } from 'utils/get-pages'
+import { getEditorLink } from 'utils/get-editor-link'
 
 export default function Example({ example }) {
   const Component = useComponent(example.code)
   return (
     <div>
       <h2>{example.name}</h2>
+      {example.path && (
+        <a href={getEditorLink({ path: example.path })}>Open Source</a>
+      )}
       <Component />
     </div>
   )
@@ -17,7 +21,7 @@ export async function getStaticPaths() {
   return {
     paths: examples.map((example) => ({
       params: {
-        component: example.component,
+        component: example.componentSlug,
         example: example.slug,
       },
     })),
@@ -31,7 +35,7 @@ export async function getStaticProps(query) {
     props: {
       example: examples.find(
         (example) =>
-          example.component === query.params.component &&
+          example.componentSlug === query.params.component &&
           example.slug === query.params.example
       ),
     },

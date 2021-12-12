@@ -3,23 +3,35 @@ import * as path from 'path'
 import { kebabCase } from 'case-anything'
 import { transformCode } from 'utils/transform-code'
 
+const componentsDirectory = path.resolve(process.cwd(), 'components')
+
 export async function getComponents() {
-  const fileNames = (
-    await fs.readdir(path.resolve(process.cwd(), 'components'))
-  ).filter((file) => !file.startsWith('index'))
-  return fileNames.map((fileName) => {
-    return {
+  const components = (await fs.readdir(componentsDirectory)).filter(
+    (file) => !file.startsWith('index')
+  )
+  return components.map((fileName) => {
+    const componentData = {
       name: fileName,
       slug: kebabCase(fileName),
+      path: null,
     }
+
+    if (process.env.NODE_ENV === 'development') {
+      componentData.path = path.resolve(
+        componentsDirectory,
+        fileName,
+        `${fileName}.tsx`
+      )
+    }
+
+    return componentData
   })
 }
 
 export async function getExamples() {
-  const components = (
-    await fs.readdir(path.resolve(process.cwd(), 'components'))
-  ).filter((file) => !file.startsWith('index'))
-
+  const components = (await fs.readdir(componentsDirectory)).filter(
+    (file) => !file.startsWith('index')
+  )
   const examples = await Promise.all(
     components.map(async (componentFileName) => {
       const component = kebabCase(componentFileName)
@@ -38,21 +50,26 @@ export async function getExamples() {
               path.basename(exampleFileName, `.tsx`)
             )
 
+            const examplePath = path.resolve(examplesPath, exampleFileName)
             const exampleCodeString = (
-              await fs.readFile(
-                path.resolve(examplesPath, exampleFileName),
-                'utf8'
-              )
+              await fs.readFile(examplePath, 'utf8')
             ).replace(/from '..'/g, "from 'system'")
 
             const transformedCodeString = await transformCode(exampleCodeString)
 
-            return {
-              component,
+            const exampleData = {
+              componentSlug: component,
               slug: exampleSlug,
               name: exampleFileName,
               code: transformedCodeString,
+              path: null,
             }
+
+            if (process.env.NODE_ENV === 'development') {
+              exampleData.path = examplePath
+            }
+
+            return exampleData
           })
         )
       } catch {
