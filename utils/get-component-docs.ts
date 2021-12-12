@@ -1,5 +1,6 @@
 import * as path from 'path'
 import { Project, Node } from 'ts-morph'
+import { pascalCase } from 'case-anything'
 
 const componentsDirectory = path.resolve(process.cwd(), 'components')
 const project = new Project({
@@ -8,11 +9,20 @@ const project = new Project({
 
 // TODO:
 // add support for multiple components
+// add support for forward ref
 // generate import statements for components using tsconfig paths
 export function getComponentDocs(component) {
-  const sourceFile = project.getSourceFile(
-    path.resolve(process.cwd(), componentsDirectory, component, 'index.ts')
+  const componentName = pascalCase(component)
+  const sourcePath = path.resolve(
+    process.cwd(),
+    componentsDirectory,
+    componentName,
+    'index.ts'
   )
+
+  console.log(`Generating docs for "${componentName}" at: ${sourcePath}`)
+
+  const sourceFile = project.getSourceFile(sourcePath)
   const exportedDeclarations = sourceFile.getExportedDeclarations()
   let docs = {}
 
