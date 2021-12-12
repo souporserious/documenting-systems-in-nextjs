@@ -6,6 +6,8 @@ It has the following features:
 
 ♻️ Fast Refresh for everything
 
+🤖 Component, hook, and utility doc generation
+
 🖼 Server rendered live code examples
 
 🕹 Interactive playground using Monaco Editor
