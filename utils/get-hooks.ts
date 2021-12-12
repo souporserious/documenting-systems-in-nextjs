@@ -19,17 +19,20 @@ export async function getHooks() {
 
   const sourceFile = project.getSourceFile(sourcePath)
   const exportedDeclarations = sourceFile.getExportedDeclarations()
-  let examples = {}
+  let docs = {}
 
   exportedDeclarations.forEach(([declaration]) => {
     if (Node.isFunctionDeclaration(declaration)) {
       const [doc] = declaration.getJsDocs()
 
       if (doc) {
-        examples[declaration.getName()] = doc
-          .getTags()
-          .filter((tag) => tag.getTagName() === 'example')
-          .map((tag) => tag.getCommentText())
+        docs[declaration.getName()] = {
+          description: doc.getComment(),
+          examples: doc
+            .getTags()
+            .filter((tag) => tag.getTagName() === 'example')
+            .map((tag) => tag.getCommentText()),
+        }
       }
     }
   })
@@ -38,7 +41,9 @@ export async function getHooks() {
     hooks.map(async (fileName) => {
       const extension = path.extname(fileName).slice(1)
       const name = path.basename(fileName, `.${extension}`)
-      let hookExamples = examples[camelCase(name)]
+      const doc = docs[camelCase(name)]
+      let hookExamples = doc.examples
+
       if (hookExamples) {
         const compiledExamples = await Promise.all(
           hookExamples.map((codeString) => {
@@ -53,10 +58,12 @@ export async function getHooks() {
       } else {
         hookExamples = null
       }
+
       const hookData = {
         name: camelCase(name),
         slug: name,
         path: null,
+        description: doc.description,
         examples: hookExamples,
       }
 

@@ -47,10 +47,10 @@ export default function Hook({ allHooks, hook }) {
       </div>
       <div>
         <h1>{hook.name}</h1>
+        <p>{hook.description}</p>
         {hook.path && (
           <a href={getEditorLink({ path: hook.path })}>Open Source</a>
         )}
-        <a>{hook.name}</a>
         <h2>Examples</h2>
         {hook.examples.map((example, index) => (
           <Example key={index} example={example} />
