@@ -13,7 +13,7 @@ export default function Example({ component, example }) {
           {pascalCase(component)} / {example.name}
         </h2>
         {example.path && (
-          <a href={getEditorLink({ path: example.path })}>Open Source</a>
+          <a href={getEditorLink({ path: example.path })}>View Source</a>
         )}
       </div>
       <Component />

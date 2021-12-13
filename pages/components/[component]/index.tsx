@@ -44,7 +44,7 @@ export default function Component({
       <div>
         <code>import {`{ ${component.name} }`} from '@components'</code>
         {component.path && (
-          <a href={getEditorLink({ path: component.path })}>Open Source</a>
+          <a href={getEditorLink({ path: component.path })}>View Source</a>
         )}
         <Component />
         <h2>Props</h2>

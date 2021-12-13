@@ -3,17 +3,22 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build && next export"
+    "dev": "run-p dev:*",
+    "dev:next": "next dev",
+    "dev:data": "node data",
+    "build": "node data && next build && next export"
   },
   "dependencies": {
-    "@swc/core": "^1.2.119",
+    "@swc/core": "^1.2.120",
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
     "case-anything": "^1.1.3",
-    "esbuild": "^0.14.2",
+    "chokidar": "^3.5.2",
+    "esbuild": "^0.14.3",
+    "esbuild-register": "^3.2.1",
     "next": "^12.0.7",
     "next-remote-refresh": "^0.6.1",
+    "npm-run-all": "^4.1.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "ts-morph": "^13.0.2",
