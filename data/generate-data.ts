@@ -156,29 +156,6 @@ async function writeData() {
   await writeHooksData()
 }
 
-const watcher = chokidar.watch([
-  componentsSourceFile.getDirectoryPath() + '/**/*.(ts|tsx)',
-  hooksSourceFile.getDirectoryPath() + '/**/*.(ts|tsx)',
-])
-
-watcher.on('change', async function (changedPath) {
-  if (DEBUG) {
-    console.log('refreshing: ', changedPath)
-  }
-  await project.getSourceFile(changedPath).refreshFromFileSystem()
-
-  const start = performance.now()
-  if (DEBUG) {
-    console.log('start gathering updated hooks: ', start)
-  }
-
-  await writeData()
-
-  if (DEBUG) {
-    console.log('end gathering updated hooks: ', performance.now() - start)
-  }
-})
-
 const start = performance.now()
 if (DEBUG) {
   console.log('start gathering initial hooks: ', start)
@@ -189,3 +166,28 @@ writeData().then(() => {
     console.log('finished gathering initial hooks: ', performance.now() - start)
   }
 })
+
+if (process.argv.includes('--watch')) {
+  const watcher = chokidar.watch([
+    componentsSourceFile.getDirectoryPath() + '/**/*.(ts|tsx)',
+    hooksSourceFile.getDirectoryPath() + '/**/*.(ts|tsx)',
+  ])
+
+  watcher.on('change', async function (changedPath) {
+    if (DEBUG) {
+      console.log('refreshing: ', changedPath)
+    }
+    await project.getSourceFile(changedPath).refreshFromFileSystem()
+
+    const start = performance.now()
+    if (DEBUG) {
+      console.log('start gathering updated hooks: ', start)
+    }
+
+    await writeData()
+
+    if (DEBUG) {
+      console.log('end gathering updated hooks: ', performance.now() - start)
+    }
+  })
+}

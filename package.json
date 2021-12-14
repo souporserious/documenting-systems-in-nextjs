@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "run-p dev:*",
+    "dev:data": "yarn build:data --watch",
     "dev:next": "next dev",
-    "dev:data": "yarn data",
-    "data": "node data/build && node data/dist/generate-data",
-    "build": "yarn data && next build && next export"
+    "build": "run-s build:*",
+    "build:data": "node data/build && node data/dist/generate-data",
+    "build:next": "next build && next export"
   },
   "dependencies": {
     "@swc/core": "^1.2.120",
