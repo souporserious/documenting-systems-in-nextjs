@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "run-p dev:*",
     "dev:next": "next dev",
-    "dev:data": "node data/build && node data/dist/generate-data",
-    "build": "node data && next build && next export"
+    "dev:data": "yarn data",
+    "data": "node data/build && node data/dist/generate-data",
+    "build": "yarn data && next build && next export"
   },
   "dependencies": {
     "@swc/core": "^1.2.120",
