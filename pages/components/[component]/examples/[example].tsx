@@ -5,7 +5,7 @@ import { pascalCase } from 'case-anything'
 import allComponents from '../../../../.cache/components.json'
 
 export default function Example({ component, example }) {
-  const Component = useComponent(example.code)
+  const Component = useComponent(example.compiledCode)
   return (
     <>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>

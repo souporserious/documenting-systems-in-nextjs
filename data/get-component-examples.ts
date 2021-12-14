@@ -38,7 +38,8 @@ export async function getComponentExamples() {
               componentSlug: component,
               slug: exampleSlug,
               name: exampleFileName,
-              code: transformedCodeString,
+              code: exampleCodeString,
+              compiledCode: transformedCodeString,
               path: null,
             }
 

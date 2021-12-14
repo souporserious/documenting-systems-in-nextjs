@@ -11,19 +11,32 @@
     "build:next": "next build && next export"
   },
   "dependencies": {
+    "@monaco-editor/loader": "^1.2.0",
     "@swc/core": "^1.2.120",
+    "@swc/wasm-web": "^1.2.120",
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
+    "base64-url": "^2.3.3",
     "case-anything": "^1.1.3",
     "chokidar": "^3.5.2",
-    "esbuild": "^0.14.4",
+    "color": "^4.1.0",
+    "css-loader": "^6.5.1",
+    "esbuild": "^0.14.5",
+    "monaco-editor": "^0.31.0",
+    "monaco-editor-textmate": "^3.0.0",
+    "monaco-editor-webpack-plugin": "^7.0.0",
+    "monaco-textmate": "^3.0.1",
     "next": "^12.0.7",
     "next-remote-refresh": "^0.7.1",
     "npm-run-all": "^4.1.5",
+    "onigasm": "^2.2.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "style-loader": "^3.3.1",
     "ts-morph": "^13.0.2",
+    "type-fest": "^2.8.0",
     "typescript": "^4.5.4",
+    "url-loader": "^4.1.1",
     "xdm": "^3.3.1"
   }
 }

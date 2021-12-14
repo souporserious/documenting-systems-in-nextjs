@@ -5,6 +5,8 @@ import { useRemoteRefresh } from 'next-remote-refresh/hook'
 import allComponents from '../.cache/components.json'
 import allHooks from '../.cache/hooks.json'
 
+import '../app.css'
+
 export default function App({ Component, pageProps }) {
   const router = useRouter()
 
@@ -12,14 +14,25 @@ export default function App({ Component, pageProps }) {
     useRemoteRefresh()
   }
 
-  if (router.asPath.includes('examples')) {
+  if (
+    router.asPath.includes('playground') ||
+    router.asPath.includes('preview') ||
+    router.asPath.includes('examples')
+  ) {
     return <Component {...pageProps} />
   }
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr' }}>
       <nav>
-        <Link href="/">👻</Link>
+        <Link href="/" passHref>
+          <a style={{ display: 'flex', fontSize: 18, padding: 8 }}>👻</a>
+        </Link>
+        <Link href={`/playground`} passHref>
+          <a style={{ display: 'flex', fontSize: 18, padding: 8 }}>
+            Playground
+          </a>
+        </Link>
         <h2>Components</h2>
         {allComponents.map(({ name, slug }) => (
           <Link key={name} href={`/components/${slug}`} passHref>
