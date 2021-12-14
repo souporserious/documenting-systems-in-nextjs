@@ -1,13 +1,13 @@
 import * as React from 'react'
 import { useComponent } from 'hooks'
-import { getData } from 'utils'
 import { getEditorLink } from 'utils/get-editor-link'
 import { pascalCase } from 'case-anything'
+import allComponents from '../../../../.cache/components.json'
 
 export default function Example({ component, example }) {
   const Component = useComponent(example.code)
   return (
-    <div>
+    <>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
         <h2>
           {pascalCase(component)} / {example.name}
@@ -17,12 +17,11 @@ export default function Example({ component, example }) {
         )}
       </div>
       <Component />
-    </div>
+    </>
   )
 }
 
 export async function getStaticPaths() {
-  const allComponents = await getData('components')
   const allExamples = allComponents.flatMap((component) => component.examples)
   return {
     paths: allExamples.map((example) => ({
@@ -36,7 +35,6 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps(query) {
-  const allComponents = await getData('components')
   const allExamples = allComponents.flatMap((component) => component.examples)
   return {
     props: {
