@@ -1,18 +1,12 @@
 import { promises as fs } from 'fs'
-import * as path from 'path'
-import { pascalCase } from 'case-anything'
 import { compile } from 'xdm'
-import { transformCode } from 'utils/transform-code'
 import { StringDecoder } from 'string_decoder'
 import xdm from 'xdm/esbuild.js'
 import * as esbuild from 'esbuild'
+import { transformCode } from './transform-code.js'
 
-export async function getComponentReadme(componentSlug) {
-  const componentReadmePath = path.resolve(
-    process.cwd(),
-    'components',
-    `${pascalCase(componentSlug)}/README.mdx`
-  )
+export async function getComponentReadme(componentDirectoryPath) {
+  const componentReadmePath = `${componentDirectoryPath}/README.mdx`
   const componentReadmeContents = await fs.readFile(
     componentReadmePath,
     'utf-8'

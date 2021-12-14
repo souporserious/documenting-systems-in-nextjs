@@ -3,7 +3,7 @@ import * as React from 'react'
 export type BoxProps = {
   as?: string
   children?: React.ReactNode
-  padding?: string
+  padding?: number | string
   backgroundColor?: string
 }
 

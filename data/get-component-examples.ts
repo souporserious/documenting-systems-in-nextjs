@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs'
 import * as path from 'path'
 import { kebabCase } from 'case-anything'
-import { transformCode } from 'utils/transform-code'
+import { transformCode } from './transform-code.js'
 
 const componentsDirectory = path.resolve(process.cwd(), 'components')
 

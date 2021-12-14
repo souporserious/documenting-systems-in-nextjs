@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useComponent } from 'hooks'
-import { getComponentExamples } from 'utils/get-component-examples'
+import { getComponents } from 'utils/get-components'
 import { getEditorLink } from 'utils/get-editor-link'
 import { pascalCase } from 'case-anything'
 
@@ -22,9 +22,10 @@ export default function Example({ component, example }) {
 }
 
 export async function getStaticPaths() {
-  const examples = await getComponentExamples()
+  const allComponents = await getComponents()
+  const allExamples = allComponents.flatMap((component) => component.examples)
   return {
-    paths: examples.map((example) => ({
+    paths: allExamples.map((example) => ({
       params: {
         component: example.componentSlug,
         example: example.slug,
@@ -35,11 +36,12 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps(query) {
-  const examples = await getComponentExamples()
+  const allComponents = await getComponents()
+  const allExamples = allComponents.flatMap((component) => component.examples)
   return {
     props: {
       component: query.params.component,
-      example: examples.find(
+      example: allExamples.find(
         (example) =>
           example.componentSlug === query.params.component &&
           example.slug === query.params.example

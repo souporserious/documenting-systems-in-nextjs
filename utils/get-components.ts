@@ -1,28 +1,10 @@
 import { promises as fs } from 'fs'
 import * as path from 'path'
-import { kebabCase } from 'case-anything'
-
-const componentsDirectory = path.resolve(process.cwd(), 'components')
 
 export async function getComponents() {
-  const components = (await fs.readdir(componentsDirectory)).filter(
-    (file) => !file.startsWith('index')
+  const json = await fs.readFile(
+    path.resolve(process.cwd(), '.cache/components.json'),
+    'utf-8'
   )
-  return components.map((fileName) => {
-    const componentData = {
-      name: fileName,
-      slug: kebabCase(fileName),
-      path: null,
-    }
-
-    if (process.env.NODE_ENV === 'development') {
-      componentData.path = path.resolve(
-        componentsDirectory,
-        fileName,
-        `${fileName}.tsx`
-      )
-    }
-
-    return componentData
-  })
+  return JSON.parse(json)
 }

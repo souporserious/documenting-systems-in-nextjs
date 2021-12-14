@@ -1,25 +1,74 @@
 import { promises as fs, existsSync, mkdirSync, readdirSync } from 'fs'
 import * as path from 'path'
 import { Project, Node } from 'ts-morph'
-import { camelCase } from 'case-anything'
-import { transformCode } from './transform-code'
+import { camelCase, kebabCase } from 'case-anything'
+import { transformCode } from './transform-code.js'
+import { getComponentExamples } from './get-component-examples.js'
+import { getComponentReadme } from './get-component-readme.js'
 import chokidar from 'chokidar'
 import { performance } from 'perf_hooks'
 
 const hooksDirectory = path.resolve(process.cwd(), 'hooks')
-const project = new Project({
-  tsConfigFilePath: path.resolve(process.cwd(), 'tsconfig.json'),
-})
 const hooks = readdirSync(hooksDirectory).filter(
   (file) => !file.startsWith('index')
 )
-const sourcePath = path.resolve(process.cwd(), hooksDirectory, 'index.ts')
-const sourceFile = project.getSourceFile(sourcePath)
+const project = new Project({
+  tsConfigFilePath: path.resolve(process.cwd(), 'tsconfig.json'),
+})
+const componentsSourceFile = project.getSourceFile('components/index.ts')
+const hooksSourceFile = project.getSourceFile('hooks/index.ts')
+
+export function getComponentTypes(declaration) {
+  const [props] = declaration.getParameters()
+  const type = props.getType()
+  return type.getProperties().map((prop) => {
+    const [propDeclaration] = prop.getDeclarations()
+    const [commentRange] = propDeclaration.getLeadingCommentRanges()
+    return {
+      name: prop.getName(),
+      type: prop.getTypeAtLocation(declaration).getText(),
+      comment: commentRange?.getText() || null,
+    }
+  })
+}
+
+export async function getComponents() {
+  const exportedDeclarations = componentsSourceFile.getExportedDeclarations()
+  const allComponentExamples = await getComponentExamples()
+  const allComponents = await Promise.all(
+    Array.from(exportedDeclarations).map(async ([name, [declaration]]) => {
+      if (Node.isFunctionDeclaration(declaration)) {
+        const componentSourceFile = declaration.getSourceFile()
+        const componentReadme = await getComponentReadme(
+          componentSourceFile.getDirectoryPath()
+        )
+        const componentSlug = kebabCase(name)
+        const componentData = {
+          path: null,
+          name: name,
+          slug: componentSlug,
+          readme: componentReadme,
+          props: getComponentTypes(declaration),
+          examples: allComponentExamples.filter(
+            (example) => example.componentSlug === componentSlug
+          ),
+        }
+
+        if (process.env.NODE_ENV === 'development') {
+          componentData.path = declaration.getSourceFile().getFilePath()
+        }
+
+        return componentData
+      }
+    })
+  )
+  return allComponents.filter(Boolean)
+}
 
 export async function getHooks() {
   let docs = {}
 
-  sourceFile.getExportedDeclarations().forEach(([declaration]) => {
+  hooksSourceFile.getExportedDeclarations().forEach(([declaration]) => {
     if (Node.isFunctionDeclaration(declaration)) {
       const [doc] = declaration.getJsDocs()
 
@@ -66,31 +115,51 @@ export async function getHooks() {
         examples: hookExamples,
       }
 
-      // if (process.env.NODE_ENV === 'development') {
-      hookData.path = hookPath
-      // }
+      if (process.env.NODE_ENV === 'development') {
+        hookData.path = hookPath
+      }
 
       return hookData
     })
   )
 }
 
-export async function writeHooks() {
-  const hooks = await getHooks()
-  if (DEBUG) {
-    console.log('writing hooks to cache: ', hooks)
-  }
-  fs.writeFile(`${cacheDirectory}/hooks.json`, JSON.stringify(hooks))
-}
-
-const DEBUG = true
+const DEBUG = process.argv.includes('--debug')
 const cacheDirectory = '.cache'
 
 if (!existsSync(cacheDirectory)) {
   mkdirSync(cacheDirectory)
 }
 
-const watcher = chokidar.watch(hooksDirectory + '/**/*.(ts|tsx)')
+async function writeComponentsData() {
+  const components = await getComponents()
+
+  if (DEBUG) {
+    console.log('writing data to cache: ', components)
+  }
+
+  fs.writeFile(`${cacheDirectory}/components.json`, JSON.stringify(components))
+}
+
+async function writeHooksData() {
+  const hooks = await getHooks()
+
+  if (DEBUG) {
+    console.log('writing hooks to cache: ', hooks)
+  }
+
+  fs.writeFile(`${cacheDirectory}/hooks.json`, JSON.stringify(hooks))
+}
+
+async function writeData() {
+  await writeComponentsData()
+  await writeHooksData()
+}
+
+const watcher = chokidar.watch([
+  componentsSourceFile.getDirectoryPath() + '/**/*.(ts|tsx)',
+  hooksSourceFile.getDirectoryPath() + '/**/*.(ts|tsx)',
+])
 
 watcher.on('change', async function (changedPath) {
   if (DEBUG) {
@@ -103,7 +172,7 @@ watcher.on('change', async function (changedPath) {
     console.log('start gathering updated hooks: ', start)
   }
 
-  await writeHooks()
+  await writeData()
 
   if (DEBUG) {
     console.log('end gathering updated hooks: ', performance.now() - start)
@@ -115,7 +184,7 @@ if (DEBUG) {
   console.log('start gathering initial hooks: ', start)
 }
 
-writeHooks().then(() => {
+writeData().then(() => {
   if (DEBUG) {
     console.log('finished gathering initial hooks: ', performance.now() - start)
   }
