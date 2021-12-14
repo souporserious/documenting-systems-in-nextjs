@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { getComponents, getHooks } from 'utils'
+import { getData } from 'utils'
 
 export default function Components({ allComponents, allHooks }) {
   return (
@@ -22,8 +22,8 @@ export default function Components({ allComponents, allHooks }) {
 }
 
 export async function getStaticProps() {
-  const allComponents = await getComponents()
-  const allHooks = await getHooks()
+  const allComponents = await getData('components')
+  const allHooks = await getData('hooks')
   return {
     props: {
       allComponents,

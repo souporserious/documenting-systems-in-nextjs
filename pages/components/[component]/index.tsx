@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useComponent } from 'hooks'
-import { getComponents } from 'utils'
+import { getData } from 'utils'
 import { getEditorLink } from 'utils/get-editor-link'
 
 export default function Component({ allComponents, component, docs }) {
@@ -63,9 +63,9 @@ export default function Component({ allComponents, component, docs }) {
 }
 
 export async function getStaticPaths() {
-  const components = await getComponents()
+  const allComponents = await getData('components')
   return {
-    paths: components.map((component) => ({
+    paths: allComponents.map((component) => ({
       params: { component: component.slug },
     })),
     fallback: false,
@@ -73,7 +73,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const allComponents = await getComponents()
+  const allComponents = await getData('components')
   const component = allComponents.find(
     (component) => component.slug === params.component
   )

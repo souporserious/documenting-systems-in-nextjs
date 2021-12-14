@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useComponent } from 'hooks'
-import { getComponents } from 'utils/get-components'
+import { getData } from 'utils'
 import { getEditorLink } from 'utils/get-editor-link'
 import { pascalCase } from 'case-anything'
 
@@ -22,7 +22,7 @@ export default function Example({ component, example }) {
 }
 
 export async function getStaticPaths() {
-  const allComponents = await getComponents()
+  const allComponents = await getData('components')
   const allExamples = allComponents.flatMap((component) => component.examples)
   return {
     paths: allExamples.map((example) => ({
@@ -36,7 +36,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps(query) {
-  const allComponents = await getComponents()
+  const allComponents = await getData('components')
   const allExamples = allComponents.flatMap((component) => component.examples)
   return {
     props: {

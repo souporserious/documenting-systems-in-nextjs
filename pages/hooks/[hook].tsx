@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { getHooks } from 'utils'
+import { getData } from 'utils'
 import { getEditorLink } from 'utils/get-editor-link'
 import { useComponent } from 'hooks/use-component'
 
@@ -61,9 +61,9 @@ export default function Hook({ allHooks, hook }) {
 }
 
 export async function getStaticPaths() {
-  const hooks = await getHooks()
+  const allHooks = await getData('hooks')
   return {
-    paths: hooks.map((hook) => ({
+    paths: allHooks.map((hook) => ({
       params: { hook: hook.slug },
     })),
     fallback: false,
@@ -71,7 +71,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const allHooks = await getHooks()
+  const allHooks = await getData('hooks')
   const hook = allHooks.find((hook) => hook.slug === params.hook)
   return {
     props: {
