@@ -34,16 +34,54 @@ export default function Playground() {
             <a style={{ display: 'flex', fontSize: 18, padding: 8 }}>👻</a>
           </Link>
           <h2>Examples</h2>
-          <ul style={{ listStyle: 'none', padding: 0 }}>
+          <ul
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              listStyle: 'none',
+              padding: 0,
+              gap: 16,
+            }}
+          >
             {allComponents
               .filter((component) => component.examples.length > 0)
               .map(({ name, examples }) => (
-                <li key={name}>
-                  <h3>{name}</h3>
+                <li
+                  key={name}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 8,
+                  }}
+                >
+                  <h3 style={{ fontSize: 14, margin: 0 }}>{name}</h3>
                   <ul style={{ listStyle: 'none', padding: 0 }}>
-                    {examples.map(({ name, code }) => (
-                      <li key={name}>
-                        <button onClick={() => setCode(code)}>{name}</button>
+                    {examples.map(({ name, code, slug, componentSlug }) => (
+                      <li
+                        key={name}
+                        style={{
+                          width: 150,
+                          height: 100,
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <button
+                          onClick={() => setCode(code)}
+                          style={{ appearance: 'none', padding: 0, border: 0 }}
+                        >
+                          <iframe
+                            title={name}
+                            src={`components/${componentSlug}/examples/${slug}`}
+                            style={{
+                              pointerEvents: 'none',
+                              width: 600,
+                              height: 400,
+                              transform: 'scale(0.25)',
+                              transformOrigin: 'top left',
+                              border: '1px solid var(--color-separator)',
+                            }}
+                          />
+                        </button>
                       </li>
                     ))}
                   </ul>

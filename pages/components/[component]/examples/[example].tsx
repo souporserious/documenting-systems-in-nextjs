@@ -9,9 +9,9 @@ export default function Example({ component, example }) {
   return (
     <>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-        <h2>
+        {/* <h2>
           {pascalCase(component)} / {example.name}
-        </h2>
+        </h2> */}
         {example.path && (
           <a href={getEditorLink({ path: example.path })}>View Source</a>
         )}

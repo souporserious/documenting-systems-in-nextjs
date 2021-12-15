@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 :root {
   --color-foreground: rgba(255, 255, 255, 1);
   --color-foreground-interactive: rgba(255, 255, 255, 0.9);
