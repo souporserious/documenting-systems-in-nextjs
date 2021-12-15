@@ -7,7 +7,7 @@ export default function Component({ component }) {
   const Component = useComponent(component.readme)
   return (
     <>
-      <code>import {`{ ${component.name} }`} from '@components'</code>
+      <code>import {`{ ${component.name} }`} from 'components'</code>
       {component.path && (
         <a href={getEditorLink({ path: component.path })}>View Source</a>
       )}

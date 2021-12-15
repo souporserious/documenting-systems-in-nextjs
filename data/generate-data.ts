@@ -1,6 +1,12 @@
 import { promises as fs, existsSync, mkdirSync, readdirSync } from 'fs'
 import * as path from 'path'
-import { Project, Node, FunctionDeclaration } from 'ts-morph'
+import {
+  Project,
+  Node,
+  FunctionDeclaration,
+  CallExpression,
+  ArrowFunction,
+} from 'ts-morph'
 import { camelCase, kebabCase } from 'case-anything'
 import { transformCode } from './transform-code.js'
 import { getComponentExamples } from './get-component-examples.js'
@@ -27,7 +33,60 @@ project.addSourceFilesAtPaths(['components/**/*.{ts,tsx}', 'hooks/**/*.ts'])
 const componentsSourceFile = project.getSourceFile('components/index.ts')
 const hooksSourceFile = project.getSourceFile('hooks/index.ts')
 
-export function getComponentTypes(declaration: FunctionDeclaration) {
+export function isForwardRefExpression(initializer) {
+  if (Node.isCallExpression(initializer)) {
+    const expression = initializer.getExpression()
+
+    /** Test for: 'forwardRef' */
+    if (
+      Node.isIdentifier(expression) &&
+      expression.getText() === 'forwardRef'
+    ) {
+      return true
+    }
+
+    /** Test for: 'React.forwardRef' */
+    if (
+      Node.isPropertyAccessExpression(expression) &&
+      expression.getName() === 'forwardRef'
+    ) {
+      return true
+    }
+  }
+
+  return false
+}
+
+export function getReactFunctionDeclaration(
+  declaration
+): FunctionDeclaration | ArrowFunction | null {
+  if (Node.isVariableDeclaration(declaration)) {
+    const initializer = declaration.getInitializer()
+
+    /**
+     * If we're dealing with a 'forwardRef' call we take the first argument of
+     * the function since that is the component declaration.
+     */
+    if (isForwardRefExpression(initializer)) {
+      const callExpression = initializer as CallExpression
+      const [declaration] = callExpression.getArguments()
+      return declaration as FunctionDeclaration | ArrowFunction
+    }
+  }
+
+  if (Node.isFunctionDeclaration(declaration)) {
+    const name = declaration.getName()
+    if (name[0] === name[0].toUpperCase()) {
+      return declaration
+    }
+  }
+
+  return null
+}
+
+export function getReactComponentTypes(
+  declaration: FunctionDeclaration | ArrowFunction
+) {
   const [props] = declaration.getParameters()
   const type = props.getType()
   return (
@@ -66,8 +125,10 @@ export async function getComponents() {
   const allComponentExamples = await getComponentExamples()
   const allComponents = await Promise.all(
     Array.from(exportedDeclarations).map(async ([name, [declaration]]) => {
-      if (Node.isFunctionDeclaration(declaration)) {
-        const componentSourceFile = declaration.getSourceFile()
+      const reactFunctionDeclaration = getReactFunctionDeclaration(declaration)
+
+      if (reactFunctionDeclaration) {
+        const componentSourceFile = reactFunctionDeclaration.getSourceFile()
         const componentReadme = await getComponentReadme(
           componentSourceFile.getDirectoryPath()
         )
@@ -77,7 +138,7 @@ export async function getComponents() {
           name: name,
           slug: componentSlug,
           readme: componentReadme,
-          props: getComponentTypes(declaration),
+          props: getReactComponentTypes(reactFunctionDeclaration),
           examples: allComponentExamples.filter(
             (example) => example.componentSlug === componentSlug
           ),
@@ -169,7 +230,7 @@ async function writeComponentsData() {
 
   fs.writeFile(
     `${cacheDirectory}/components.ts`,
-    `export const allComponents = ${JSON.stringify(components)}`
+    `export const allComponents = ${JSON.stringify(components, null, 2)}`
   )
 }
 
@@ -182,7 +243,7 @@ async function writeHooksData() {
 
   fs.writeFile(
     `${cacheDirectory}/hooks.ts`,
-    `export const allHooks = ${JSON.stringify(hooks)}`
+    `export const allHooks = ${JSON.stringify(hooks, null, 2)}`
   )
 }
 
@@ -199,7 +260,7 @@ async function writeTypesData() {
 
   fs.writeFile(
     `${cacheDirectory}/types.ts`,
-    `export const allTypes = ${JSON.stringify(declarationFiles)}`
+    `export const allTypes = ${JSON.stringify(declarationFiles, null, 2)}`
   )
 }
 
@@ -209,7 +270,7 @@ async function writeData() {
   await writeTypesData()
   await fs.writeFile(
     `${cacheDirectory}/index.ts`,
-    ['components', 'hooks']
+    ['components', 'hooks', 'types']
       .map((name) => `export * from './${name}'`)
       .join('\n')
   )

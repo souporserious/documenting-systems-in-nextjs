@@ -19,6 +19,7 @@ function Example({
 export default function Hook({ hook }) {
   return (
     <>
+      <code>import {`{ ${hook.name} }`} from 'hooks'</code>
       <h1>{hook.name}</h1>
       <p>{hook.description}</p>
       {hook.path && (

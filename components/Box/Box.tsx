@@ -8,16 +8,20 @@ export type BoxProps = {
   color?: string
 } & React.HTMLAttributes<HTMLElement>
 
-export function Box({
-  as: Element = 'div',
-  padding,
-  backgroundColor,
-  color,
-  children,
-  ...props
-}: BoxProps) {
+export const Box = React.forwardRef(function Box(
+  {
+    as: Element = 'div',
+    padding,
+    backgroundColor,
+    color,
+    children,
+    ...props
+  }: BoxProps,
+  ref
+) {
   return (
     <Element
+      ref={ref}
       {...props}
       style={{
         padding,
@@ -28,4 +32,4 @@ export function Box({
       {children}
     </Element>
   )
-}
+})
