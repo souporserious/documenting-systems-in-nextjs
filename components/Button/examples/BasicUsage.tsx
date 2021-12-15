@@ -4,7 +4,7 @@ import { Box, Button } from 'components'
 export default function BasicUsage() {
   return (
     <Box padding={16} backgroundColor="papayawhip">
-      <Button>Button</Button>
+      <Button variant="primary">Button</Button>
     </Box>
   )
 }

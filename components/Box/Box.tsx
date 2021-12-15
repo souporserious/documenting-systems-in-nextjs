@@ -5,12 +5,14 @@ export type BoxProps = {
   children?: React.ReactNode
   padding?: number | string
   backgroundColor?: string
+  color?: string
 }
 
 export function Box({
   as: Element = 'div',
   padding,
   backgroundColor,
+  color,
   children,
   ...props
 }: BoxProps) {
@@ -20,6 +22,7 @@ export function Box({
       style={{
         padding,
         backgroundColor,
+        color,
       }}
     >
       {children}

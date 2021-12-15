@@ -212,11 +212,38 @@ if (process.argv.includes('--watch')) {
     hooksSourceFile.getDirectoryPath() + '/**/*.(ts|tsx)',
   ])
 
+  /**
+   * Listen for 'add' events after watcher is ready otherwise we get callbacks
+   * for every path that was added.
+   */
+  watcher.on('ready', function () {
+    watcher.on('add', async function (addedPath) {
+      if (DEBUG) {
+        console.log('adding path to project: ', addedPath)
+      }
+      project.addSourceFileAtPath(addedPath)
+      await writeData()
+    })
+
+    watcher.on('remove', async function (removedPath) {
+      if (DEBUG) {
+        console.log('removing path from project: ', removedPath)
+      }
+      project.removeSourceFile(removedPath)
+      await writeData()
+    })
+  })
+
   watcher.on('change', async function (changedPath) {
-    if (DEBUG) {
-      console.log('refreshing: ', changedPath)
+    const changedSourceFile = project.getSourceFile(changedPath)
+    if (changedSourceFile) {
+      if (DEBUG) {
+        console.log('refreshing: ', changedPath)
+      }
+      await changedSourceFile.refreshFromFileSystem()
+    } else if (DEBUG) {
+      console.log('unable to refresh: ', changedPath)
     }
-    await project.getSourceFile(changedPath).refreshFromFileSystem()
 
     const start = performance.now()
     if (DEBUG) {
