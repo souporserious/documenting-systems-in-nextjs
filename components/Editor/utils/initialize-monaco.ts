@@ -3,6 +3,7 @@ import { wireTmGrammars } from 'monaco-editor-textmate'
 import { Registry } from 'monaco-textmate'
 import { loadWASM } from 'onigasm'
 import type { AsyncReturnType } from 'type-fest'
+import { allTypes } from '.data/types'
 
 import theme from '../theme.json'
 import defineTheme from './define-theme'
@@ -121,6 +122,16 @@ export async function initializeMonaco({
         'file:///node_modules/react/index.d.ts'
       )
     })
+
+  /**
+   * Load types for components and hooks
+   */
+  allTypes.forEach((typeDef) => {
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(
+      typeDef.code,
+      typeDef.path
+    )
+  })
 
   return { editor, subscription }
 }

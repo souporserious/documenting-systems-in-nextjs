@@ -51,7 +51,7 @@ export async function getComponentExamples() {
           })
         )
       } catch {
-        console.log(`No examples found for ${component}`)
+        // console.log(`No examples found for ${component}`)
       }
       return examples
     })

@@ -13,8 +13,17 @@ const hooks = readdirSync(hooksDirectory).filter(
   (file) => !file.startsWith('index')
 )
 const project = new Project({
-  tsConfigFilePath: path.resolve(process.cwd(), 'tsconfig.json'),
+  compilerOptions: {
+    noEmit: false,
+    declaration: true,
+    emitDeclarationOnly: true,
+  },
+  tsConfigFilePath: 'tsconfig.json',
+  skipAddingFilesFromTsConfig: true,
 })
+
+project.addSourceFilesAtPaths(['components/**/*.{ts,tsx}', 'hooks/**/*.ts'])
+
 const componentsSourceFile = project.getSourceFile('components/index.ts')
 const hooksSourceFile = project.getSourceFile('hooks/index.ts')
 
@@ -157,9 +166,27 @@ async function writeHooksData() {
   )
 }
 
+async function writeTypesData() {
+  const result = project.emitToMemory()
+  const declarationFiles = result.getFiles().map((file) => ({
+    path: file.filePath.replace(process.cwd(), 'file:///node_modules'),
+    code: file.text,
+  }))
+
+  if (DEBUG) {
+    console.log('writing types to cache: ', declarationFiles)
+  }
+
+  fs.writeFile(
+    `${cacheDirectory}/types.ts`,
+    `export const allTypes = ${JSON.stringify(declarationFiles)}`
+  )
+}
+
 async function writeData() {
   await writeComponentsData()
   await writeHooksData()
+  await writeTypesData()
   await fs.writeFile(
     `${cacheDirectory}/index.ts`,
     ['components', 'hooks']
