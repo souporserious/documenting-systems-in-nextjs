@@ -125,7 +125,7 @@ export async function getHooks() {
 }
 
 const DEBUG = process.argv.includes('--debug')
-const cacheDirectory = '.cache'
+const cacheDirectory = '.data'
 
 if (!existsSync(cacheDirectory)) {
   mkdirSync(cacheDirectory)
@@ -138,7 +138,10 @@ async function writeComponentsData() {
     console.log('writing data to cache: ', components)
   }
 
-  fs.writeFile(`${cacheDirectory}/components.json`, JSON.stringify(components))
+  fs.writeFile(
+    `${cacheDirectory}/components.ts`,
+    `export const allComponents = ${JSON.stringify(components)}`
+  )
 }
 
 async function writeHooksData() {
@@ -148,12 +151,21 @@ async function writeHooksData() {
     console.log('writing hooks to cache: ', hooks)
   }
 
-  fs.writeFile(`${cacheDirectory}/hooks.json`, JSON.stringify(hooks))
+  fs.writeFile(
+    `${cacheDirectory}/hooks.ts`,
+    `export const allHooks = ${JSON.stringify(hooks)}`
+  )
 }
 
 async function writeData() {
   await writeComponentsData()
   await writeHooksData()
+  await fs.writeFile(
+    `${cacheDirectory}/index.ts`,
+    ['components', 'hooks']
+      .map((name) => `export * from './${name}'`)
+      .join('\n')
+  )
 }
 
 const start = performance.now()

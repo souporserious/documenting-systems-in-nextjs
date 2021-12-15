@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { useComponent } from 'hooks'
 import { getEditorLink } from 'utils/get-editor-link'
-import allComponents from '../../../.cache/components.json'
+import { allComponents } from '.data/components'
 
 export default function Component({ component }) {
   const Component = useComponent(component.readme)

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import allComponents from '../../.cache/components.json'
+import { allComponents } from '.data/components'
 
 export default function Components() {
   return (

@@ -2,8 +2,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useRemoteRefresh } from 'next-remote-refresh/hook'
 
-import allComponents from '../.cache/components.json'
-import allHooks from '../.cache/hooks.json'
+import { allComponents, allHooks } from '.data'
 
 import '../app.css'
 

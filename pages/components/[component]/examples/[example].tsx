@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useComponent } from 'hooks'
 import { getEditorLink } from 'utils/get-editor-link'
 import { pascalCase } from 'case-anything'
-import allComponents from '../../../../.cache/components.json'
+import { allComponents } from '.data/components'
 
 export default function Example({ component, example }) {
   const Component = useComponent(example.compiledCode)

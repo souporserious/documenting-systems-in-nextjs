@@ -7,6 +7,8 @@ build({
   bundle: true,
   platform: 'node',
   target: 'es2019',
-  external: Object.keys(dependencies).filter((dep) => dep !== 'xdm'),
+  external: Object.keys(dependencies).filter(
+    (dependency) => dependency !== 'xdm'
+  ),
   tsconfig: 'tsconfig-node.json',
 })

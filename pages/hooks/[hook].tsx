@@ -1,6 +1,6 @@
 import { getEditorLink } from 'utils/get-editor-link'
 import { useComponent } from 'hooks/use-component'
-import allHooks from '../../.cache/hooks.json'
+import { allHooks } from '.data/hooks'
 
 function Example({
   example,

@@ -16,6 +16,4 @@ It has the following features:
 
 🔀 MDX for mixing Markdown and JSX
 
-⤵️ Autogenerate import statements
-
 🧑‍🤝‍🧑 Show relationships between components, hooks, and utilities

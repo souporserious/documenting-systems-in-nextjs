@@ -113,7 +113,7 @@ export async function initializeMonaco({
    * Load React types
    * alternatively, you can use: https://github.com/lukasbach/monaco-editor-auto-typings
    */
-  fetch('https://unpkg.com/@types/react@17.0.19/index.d.ts')
+  fetch('https://unpkg.com/@types/react/index.d.ts')
     .then((response) => response.text())
     .then((types) => {
       monaco.languages.typescript.typescriptDefaults.addExtraLib(

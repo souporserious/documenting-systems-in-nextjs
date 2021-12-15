@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { encode } from 'base64-url'
 import { Editor } from 'components'
 
-import allComponents from '../.cache/components.json'
+import { allComponents } from '.data/components'
 
 const initialCodeString = `
 import React from 'react'
@@ -61,8 +61,6 @@ export default function Playground() {
 function Preview({ code }) {
   const frameRef = React.useRef<HTMLIFrameElement>(null)
   const frameSource = React.useRef(null)
-
-  console.log(code)
 
   /**
    * Only set the source of the iframe on the initial mount since we use message
