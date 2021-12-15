@@ -2,6 +2,7 @@
 import * as React from 'react'
 import loader from '@monaco-editor/loader'
 import { useRouter } from 'next/router'
+import { kebabCase } from 'case-anything'
 import { initializeMonaco } from '../utils/initialize-monaco'
 import type { Monaco } from '../utils/initialize-monaco'
 
@@ -36,12 +37,16 @@ export function useMonaco({
           id,
           onChange,
           onOpenEditor: (input) => {
-            const slug = input.resource.path
-              .replace('/node_modules/', '')
-              .replace('.d.ts', '')
-              .replace('/index', '')
-            if (slug.includes('components') || slug.includes('hooks')) {
-              router.push(slug)
+            const [base, filename] = input.resource.path
+              .replace('/node_modules/', '') // trim node_modules prefix used by Monaco Editor
+              .replace('.d.ts', '') // trim .d.ts suffix from decalaration
+              .split('/') // finally split the path into an array
+            if (base === 'components' || base === 'hooks') {
+              router.push(
+                filename === 'index'
+                  ? `/${base}`
+                  : `/${base}/${kebabCase(filename)}`
+              )
             }
           },
         })

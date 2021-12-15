@@ -79,6 +79,7 @@ export default function Playground() {
                               transform: 'scale(0.25)',
                               transformOrigin: 'top left',
                               border: '1px solid var(--color-separator)',
+                              backgroundColor: 'var(--color-background)',
                             }}
                           />
                         </button>

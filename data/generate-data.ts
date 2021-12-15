@@ -37,7 +37,9 @@ export function isForwardRefExpression(initializer) {
   if (Node.isCallExpression(initializer)) {
     const expression = initializer.getExpression()
 
-    /** Test for: 'forwardRef' */
+    /**
+     * forwardRef(() => <Component />)
+     */
     if (
       Node.isIdentifier(expression) &&
       expression.getText() === 'forwardRef'
@@ -45,10 +47,14 @@ export function isForwardRefExpression(initializer) {
       return true
     }
 
-    /** Test for: 'React.forwardRef' */
+    /**
+     * React.forwardRef(() => <Component />)
+     * TODO: We could be more detailed here and trace the React identifier back to the
+     * import and make sure it comes from the 'react' package.
+     */
     if (
       Node.isPropertyAccessExpression(expression) &&
-      expression.getName() === 'forwardRef'
+      expression.getText() === 'React.forwardRef'
     ) {
       return true
     }
