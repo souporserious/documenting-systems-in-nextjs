@@ -16,6 +16,7 @@ export type InitializeMonacoOptions = {
   defaultValue?: string
   id?: number
   onChange?: (value: string) => void
+  onOpenEditor?: (input: any, source: any) => void
 }
 
 export async function initializeMonaco({
@@ -24,6 +25,7 @@ export async function initializeMonaco({
   defaultValue = '',
   id = 0,
   onChange = () => null,
+  onOpenEditor = () => null,
 }: InitializeMonacoOptions) {
   // @ts-ignore
   const onigasm = await import('onigasm/lib/onigasm.wasm')
@@ -81,6 +83,18 @@ export async function initializeMonaco({
     fontSize: 18,
     minimap: { enabled: false },
   })
+
+  // @ts-ignore
+  const editorService = editor._codeEditorService
+  const openEditorBase = editorService.openCodeEditor.bind(editorService)
+
+  editorService.openCodeEditor = async (input, source) => {
+    const result = await openEditorBase(input, source)
+    if (result === null) {
+      onOpenEditor(input, source)
+    }
+    return result
+  }
 
   defineTheme(monaco, theme)
 

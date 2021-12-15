@@ -1,6 +1,7 @@
 // modified from: https://github.com/suren-atoyan/monaco-react/blob/master/src/Editor/Editor.js
 import * as React from 'react'
 import loader from '@monaco-editor/loader'
+import { useRouter } from 'next/router'
 import { initializeMonaco } from '../utils/initialize-monaco'
 import type { Monaco } from '../utils/initialize-monaco'
 
@@ -17,6 +18,7 @@ export function useMonaco({
   id,
   onChange,
 }: MonacoOptions) {
+  const router = useRouter()
   const [isMounting, setIsMounting] = React.useState(true)
   const monacoRef = React.useRef<Monaco>(null)
   const editorRef = React.useRef(null)
@@ -33,6 +35,15 @@ export function useMonaco({
           defaultValue: value,
           id,
           onChange,
+          onOpenEditor: (input) => {
+            const slug = input.resource.path
+              .replace('/node_modules/', '')
+              .replace('.d.ts', '')
+              .replace('/index', '')
+            if (slug.includes('components') || slug.includes('hooks')) {
+              router.push(slug)
+            }
+          },
         })
         monacoRef.current = monaco
         editorRef.current = result.editor
