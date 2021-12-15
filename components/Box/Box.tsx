@@ -6,7 +6,7 @@ export type BoxProps = {
   padding?: number | string
   backgroundColor?: string
   color?: string
-}
+} & React.HTMLAttributes<HTMLElement>
 
 export function Box({
   as: Element = 'div',

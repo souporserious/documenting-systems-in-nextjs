@@ -1,6 +1,6 @@
 import { promises as fs, existsSync, mkdirSync, readdirSync } from 'fs'
 import * as path from 'path'
-import { Project, Node } from 'ts-morph'
+import { Project, Node, FunctionDeclaration } from 'ts-morph'
 import { camelCase, kebabCase } from 'case-anything'
 import { transformCode } from './transform-code.js'
 import { getComponentExamples } from './get-component-examples.js'
@@ -27,18 +27,38 @@ project.addSourceFilesAtPaths(['components/**/*.{ts,tsx}', 'hooks/**/*.ts'])
 const componentsSourceFile = project.getSourceFile('components/index.ts')
 const hooksSourceFile = project.getSourceFile('hooks/index.ts')
 
-export function getComponentTypes(declaration) {
+export function getComponentTypes(declaration: FunctionDeclaration) {
   const [props] = declaration.getParameters()
   const type = props.getType()
-  return type.getProperties().map((prop) => {
-    const [propDeclaration] = prop.getDeclarations()
-    const [commentRange] = propDeclaration.getLeadingCommentRanges()
-    return {
-      name: prop.getName(),
-      type: prop.getTypeAtLocation(declaration).getText(),
-      comment: commentRange?.getText() || null,
-    }
-  })
+  return (
+    type
+      .getProperties()
+      /** Filter out props from packages in node_modules */
+      .filter((prop) => {
+        const propDeclarations = prop.getDeclarations()
+        if (propDeclarations !== undefined && propDeclarations.length > 0) {
+          const hasPropAdditionalDescription = propDeclarations.some(
+            (declaration) => {
+              return !declaration
+                .getSourceFile()
+                .getFilePath()
+                .includes('node_modules')
+            }
+          )
+          return hasPropAdditionalDescription
+        }
+        return true
+      })
+      .map((prop) => {
+        const [propDeclaration] = prop.getDeclarations()
+        const [commentRange] = propDeclaration.getLeadingCommentRanges()
+        return {
+          name: prop.getName(),
+          type: prop.getTypeAtLocation(declaration).getText(),
+          comment: commentRange?.getText() || null,
+        }
+      })
+  )
 }
 
 export async function getComponents() {
