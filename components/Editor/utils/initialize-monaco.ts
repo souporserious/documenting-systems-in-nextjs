@@ -81,6 +81,8 @@ export async function initializeMonaco({
     lineNumbers: 'off',
     theme: 'vs-dark',
     fontSize: 18,
+    formatOnPaste: true,
+    formatOnType: true,
     minimap: { enabled: false },
   })
 
@@ -118,8 +120,15 @@ export async function initializeMonaco({
     noSyntaxValidation: false,
   })
 
-  const subscription = editor.onDidChangeModelContent(() => {
+  const onChangeSubscription = editor.onDidChangeModelContent(() => {
     onChange(editor.getValue())
+  })
+  const onKeyDownSubscription = editor.onKeyDown(async (event) => {
+    /** Format file on save (metaKey + s) */
+    if (event.keyCode === 49 && event.metaKey) {
+      event.preventDefault()
+      editor.getAction('editor.action.formatDocument').run()
+    }
   })
 
   editor.focus()
@@ -147,5 +156,13 @@ export async function initializeMonaco({
     )
   })
 
-  return { editor, subscription }
+  return {
+    editor,
+    dispose() {
+      onChangeSubscription.dispose()
+      onKeyDownSubscription.dispose()
+      editor.getModel()?.dispose()
+      editor.dispose()
+    },
+  }
 }

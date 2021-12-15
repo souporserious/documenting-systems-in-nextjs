@@ -22,7 +22,7 @@ export function useMonaco({
   const [isMounting, setIsMounting] = React.useState(true)
   const monacoRef = React.useRef<Monaco>(null)
   const editorRef = React.useRef(null)
-  const subscriptionRef = React.useRef(null)
+  const disposeRef = React.useRef(null)
 
   React.useEffect(() => {
     const cancelable = loader.init()
@@ -47,7 +47,7 @@ export function useMonaco({
         })
         monacoRef.current = monaco
         editorRef.current = result.editor
-        subscriptionRef.current = result.subscription
+        disposeRef.current = result.dispose
         setIsMounting(false)
       })
       .catch((error) => {
@@ -58,9 +58,7 @@ export function useMonaco({
 
     return () => {
       if (editorRef.current) {
-        subscriptionRef.current?.dispose()
-        editorRef.current.getModel()?.dispose()
-        editorRef.current.dispose()
+        disposeRef.current()
       } else {
         cancelable.cancel()
       }
