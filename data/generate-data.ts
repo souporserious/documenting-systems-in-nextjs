@@ -1,5 +1,8 @@
 import { promises as fs, existsSync, mkdirSync, readdirSync } from 'fs'
 import * as path from 'path'
+import chokidar from 'chokidar'
+import { camelCase, kebabCase } from 'case-anything'
+import { performance } from 'perf_hooks'
 import {
   Project,
   Node,
@@ -7,12 +10,9 @@ import {
   CallExpression,
   ArrowFunction,
 } from 'ts-morph'
-import { camelCase, kebabCase } from 'case-anything'
 import { transformCode } from './transform-code.js'
 import { getComponentExamples } from './get-component-examples.js'
 import { getComponentReadme } from './get-component-readme.js'
-import chokidar from 'chokidar'
-import { performance } from 'perf_hooks'
 
 const hooksDirectory = path.resolve(process.cwd(), 'hooks')
 const hooks = readdirSync(hooksDirectory).filter(
@@ -116,13 +116,16 @@ export function getReactComponentTypes(
       })
       .map((prop) => {
         const [propDeclaration] = prop.getDeclarations()
-        const [commentRange] = propDeclaration.getLeadingCommentRanges()
-        return {
-          name: prop.getName(),
-          type: prop.getTypeAtLocation(declaration).getText(),
-          comment: commentRange?.getText() || null,
+        if (propDeclaration) {
+          const [commentRange] = propDeclaration.getLeadingCommentRanges()
+          return {
+            name: prop.getName(),
+            type: prop.getTypeAtLocation(declaration).getText(),
+            comment: commentRange?.getText() || null,
+          }
         }
       })
+      .filter(Boolean)
   )
 }
 

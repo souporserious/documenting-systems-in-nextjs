@@ -1,3 +1,6 @@
+import { jsx } from 'components/CreateElement'
+import { AddSourceProps } from './add-source-props-plugin'
+
 let swc = null
 
 export async function transformCode(codeString: string) {
@@ -6,9 +9,16 @@ export async function transformCode(codeString: string) {
     await module.default()
     swc = module
   }
-  return swc.transformSync(codeString, {
+  const result = swc.transformSync(codeString, {
     filename: 'index.tsx',
     jsc: {
+      transform: {
+        react: {
+          pragma: 'jsx',
+          useBuiltins: true,
+          development: false,
+        },
+      },
       parser: {
         syntax: 'typescript',
         tsx: true,
@@ -17,7 +27,9 @@ export async function transformCode(codeString: string) {
     module: {
       type: 'commonjs',
     },
-  }).code
+    plugin: (program) => new AddSourceProps().visitProgram(program),
+  })
+  return result.code
 }
 
 export async function executeCode(
@@ -32,9 +44,9 @@ export async function executeCode(
     }
     throw Error(`Module not found: ${path}.`)
   }
-  const result = new Function('exports', 'require', transformedCode)
+  const result = new Function('exports', 'require', 'jsx', transformedCode)
 
-  result(exports, require)
+  result(exports, require, jsx)
 
   return exports.default
 }

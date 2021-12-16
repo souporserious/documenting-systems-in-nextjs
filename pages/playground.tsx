@@ -8,6 +8,8 @@ import { allComponents } from '.data/components'
 const initialCodeString = `
 import React from 'react'
 
+console.log('Hello World!')
+
 export default function App() {
   return (
     <div>
