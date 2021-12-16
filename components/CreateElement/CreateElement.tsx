@@ -9,7 +9,7 @@ import { usePlaygroundPosition } from 'atoms'
 export function CreateElement({ originalType, __jsxSource, ...props }) {
   const [position, setPosition] = usePlaygroundPosition()
   const active = position
-    ? position.start === __jsxSource.start && position.end === __jsxSource.end
+    ? JSON.stringify(position) === JSON.stringify(__jsxSource)
     : false
   const playgroundProps = {
     onMouseOver: (event) => {
