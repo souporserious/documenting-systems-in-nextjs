@@ -1,33 +1,19 @@
 import { jsx } from 'components/CreateElement'
-import { AddSourceProps } from './add-source-props-plugin'
+import addSourcePropPlugin from './add-source-prop-plugin'
 
-let swc = null
+let transform = null
 
 export async function transformCode(codeString: string) {
-  if (swc === null) {
-    const module = await import('@swc/wasm-web')
-    await module.default()
-    swc = module
+  if (transform === null) {
+    const module = await import('@babel/standalone')
+    transform = module.transform
   }
-  const result = swc.transformSync(codeString, {
+  const result = transform(codeString, {
     filename: 'index.tsx',
-    jsc: {
-      transform: {
-        react: {
-          pragma: 'jsx',
-          useBuiltins: true,
-          development: false,
-        },
-      },
-      parser: {
-        syntax: 'typescript',
-        tsx: true,
-      },
-    },
-    module: {
-      type: 'commonjs',
-    },
-    plugin: (program) => new AddSourceProps().visitProgram(program),
+    presets: ['env', 'typescript', ['react', { pragma: 'jsx' }]],
+    plugins: [
+      [addSourcePropPlugin, { onTreeReady: (tree) => console.log(tree) }],
+    ],
   })
   return result.code
 }

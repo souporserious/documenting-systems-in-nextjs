@@ -78,7 +78,6 @@ export async function initializeMonaco({
     model,
     language: 'typescript',
     contextmenu: false,
-    lineNumbers: 'off',
     theme: 'vs-dark',
     fontSize: 18,
     formatOnPaste: true,
@@ -137,7 +136,7 @@ export async function initializeMonaco({
    * Load React types
    * alternatively, you can use: https://github.com/lukasbach/monaco-editor-auto-typings
    */
-  fetch('https://unpkg.com/@types/react/index.d.ts')
+  fetch('https://unpkg.com/browse/@types/react@17.0.37/index.d.ts')
     .then((response) => response.text())
     .then((types) => {
       monaco.languages.typescript.typescriptDefaults.addExtraLib(

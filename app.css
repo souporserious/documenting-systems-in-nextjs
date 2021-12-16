@@ -28,3 +28,7 @@ a:hover {
 iframe {
   border: 1px solid var(--color-separator);
 }
+
+.line-decorator {
+  background: #15367482;
+}

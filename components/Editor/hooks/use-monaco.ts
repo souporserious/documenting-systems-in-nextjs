@@ -11,6 +11,12 @@ export type MonacoOptions = {
   value?: string
   id?: number
   onChange?: (value: string) => void
+  decorationRange?: {
+    startLine: number
+    startColumn: number
+    endLine: number
+    endColumn: number
+  }
 }
 
 export function useMonaco({
@@ -18,12 +24,14 @@ export function useMonaco({
   value,
   id,
   onChange,
+  decorationRange,
 }: MonacoOptions) {
   const router = useRouter()
   const [isMounting, setIsMounting] = React.useState(true)
   const monacoRef = React.useRef<Monaco>(null)
-  const editorRef = React.useRef(null)
+  const editorRef = React.useRef<ReturnType<Monaco['editor']['create']>>(null)
   const disposeRef = React.useRef(null)
+  const decorationsRef = React.useRef([])
 
   React.useEffect(() => {
     const cancelable = loader.init()
@@ -87,4 +95,41 @@ export function useMonaco({
       }
     }
   }, [value])
+
+  React.useEffect(() => {
+    if (isMounting) return
+
+    const oldDecorations = decorationsRef.current
+
+    if (decorationRange) {
+      decorationsRef.current = [
+        {
+          range: new monacoRef.current.Range(
+            decorationRange.startLine,
+            decorationRange.startColumn,
+            decorationRange.endLine,
+            decorationRange.endColumn
+          ),
+          options: {
+            className: 'line-decorator',
+            isWholeLine: true,
+          },
+        },
+      ]
+    } else {
+      decorationsRef.current = []
+    }
+
+    editorRef.current.deltaDecorations(oldDecorations, decorationsRef.current)
+
+    return () => {
+      // Hack for now to remove decorations correctly
+      // https://github.com/microsoft/monaco-editor/issues/269#issuecomment-530098836
+      Array.from(document.querySelectorAll('.line-decorator')).forEach(
+        (element) => {
+          element.classList.remove('line-decorator')
+        }
+      )
+    }
+  }, [decorationRange, isMounting, value])
 }
