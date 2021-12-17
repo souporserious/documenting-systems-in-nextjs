@@ -6,6 +6,7 @@ export type BoxProps = {
   padding?: number | string
   backgroundColor?: string
   color?: string
+  style?: React.CSSProperties
 } & React.HTMLAttributes<HTMLElement>
 
 export const Box = React.forwardRef(function Box(
@@ -15,6 +16,7 @@ export const Box = React.forwardRef(function Box(
     backgroundColor,
     color,
     children,
+    style,
     ...props
   }: BoxProps,
   ref
@@ -24,6 +26,7 @@ export const Box = React.forwardRef(function Box(
       ref={ref}
       {...props}
       style={{
+        ...style,
         padding,
         backgroundColor,
         color,

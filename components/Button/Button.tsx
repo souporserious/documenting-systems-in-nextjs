@@ -17,6 +17,7 @@ export type ButtonProps = {
   backgroundColor?: string
   color?: string
   variant: 'primary' | 'secondary'
+  style?: React.CSSProperties
 }
 
 export function Button({
@@ -24,12 +25,17 @@ export function Button({
   backgroundColor: propsBackgroundColor,
   color: propsColor,
   children,
+  style,
+  ...props
 }: ButtonProps) {
   const { backgroundColor, color } = variants[variant] || {}
   return (
     <Box
       as="button"
+      {...props}
       style={{
+        ...style,
+        appearance: 'none',
         backgroundColor: propsBackgroundColor || backgroundColor,
         color: propsColor || color,
       }}

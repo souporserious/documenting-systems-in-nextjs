@@ -1,30 +1,31 @@
-let swc = null
+import { jsx } from 'components/CreateElement'
+import type { Result } from './add-source-prop-plugin'
+import { addSourceProp } from './add-source-prop-plugin'
 
-export async function transformCode(codeString: string) {
-  if (swc === null) {
-    const module = await import('@swc/wasm-web')
-    await module.default()
-    swc = module
+let transform = null
+
+export async function transformCode(
+  codeString: string,
+  onReady: (result: Result) => void
+) {
+  if (transform === null) {
+    const module = await import('@babel/standalone')
+    transform = module.transform
   }
-  return swc.transformSync(codeString, {
+  const result = transform(codeString, {
     filename: 'index.tsx',
-    jsc: {
-      parser: {
-        syntax: 'typescript',
-        tsx: true,
-      },
-    },
-    module: {
-      type: 'commonjs',
-    },
-  }).code
+    presets: ['env', 'typescript', ['react', { pragma: 'jsx' }]],
+    plugins: [[addSourceProp, { onReady }]],
+  })
+  return result.code
 }
 
 export async function executeCode(
   codeString: string,
-  dependencies: Record<string, unknown>
+  dependencies: Record<string, unknown>,
+  onReady: (result: Result) => void
 ) {
-  const transformedCode = await transformCode(codeString)
+  const transformedCode = await transformCode(codeString, onReady)
   const exports: Record<string, unknown> = {}
   const require = (path) => {
     if (dependencies[path]) {
@@ -32,9 +33,9 @@ export async function executeCode(
     }
     throw Error(`Module not found: ${path}.`)
   }
-  const result = new Function('exports', 'require', transformedCode)
+  const result = new Function('exports', 'require', 'jsx', transformedCode)
 
-  result(exports, require)
+  result(exports, require, jsx)
 
   return exports.default
 }

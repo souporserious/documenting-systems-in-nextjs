@@ -7,15 +7,21 @@ import { transformCode } from './transform-code.js'
 
 export async function getComponentReadme(componentDirectoryPath) {
   const componentReadmePath = `${componentDirectoryPath}/README.mdx`
-  const componentReadmeContents = await fs.readFile(
-    componentReadmePath,
-    'utf-8'
-  )
+  try {
+    const componentReadmeContents = await fs.readFile(
+      componentReadmePath,
+      'utf-8'
+    )
+    return transformReadme(componentReadmeContents, componentReadmePath)
+  } catch {
+    return null
+  }
+}
+
+async function transformReadme(componentReadmeContents, componentReadmePath) {
   const containsImports = /import [^}]*.*(?=from).*/.test(
     componentReadmeContents
   )
-  let transformedReadme = ''
-
   if (containsImports) {
     // If there are imports we need to bundle with esbuild before transforming
     const result = await esbuild.build({
@@ -31,12 +37,10 @@ export async function getComponentReadme(componentDirectoryPath) {
     const bundledReadme = decoder.write(
       Buffer.from(result.outputFiles[0].contents)
     )
-    transformedReadme = await transformCode(bundledReadme)
+    return transformCode(bundledReadme)
   } else {
     // Otherwise we can simply just compile it with xdm
     const compiledReadme = await compile(componentReadmeContents)
-    transformedReadme = await transformCode(compiledReadme.value)
+    return transformCode(compiledReadme.value)
   }
-
-  return transformedReadme
 }

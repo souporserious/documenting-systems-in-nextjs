@@ -11,7 +11,7 @@ export default function Component({ component }) {
       {component.path && (
         <a href={getEditorLink({ path: component.path })}>View Source</a>
       )}
-      <Component />
+      {component.readme && <Component />}
       <h2>Props</h2>
       {component.props.map((type) => (
         <div key={type.name}>
