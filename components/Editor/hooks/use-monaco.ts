@@ -93,18 +93,23 @@ export function useMonaco({
 
     const handleChangeCursor = editorRef.current.onDidChangeCursorPosition(
       () => {
-        const { lineNumber } = editorRef.current.getPosition()
+        const { lineNumber, column } = editorRef.current.getPosition()
         const element = list
           .slice()
           .reverse()
           .find((element) => {
-            const { startLine, endLine } = element.position
-            return lineNumber >= startLine && lineNumber <= endLine
+            const { startLine, endLine, startColumn, endColumn } =
+              element.position
+            return startLine === endLine
+              ? lineNumber >= startLine &&
+                  lineNumber <= endLine &&
+                  column >= startColumn &&
+                  column <= endColumn + 1
+              : lineNumber >= startLine && lineNumber <= endLine
           })
 
         /**
-         * TODO: account for multiple elements (columns), this only works for
-         * one element right now. Also need to account for multiple cursors.
+         * TODO: Need to account for multiple cursors.
          */
         setPosition(element ? element.position : null)
       }

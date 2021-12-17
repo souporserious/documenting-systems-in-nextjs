@@ -17,9 +17,9 @@ const storage = {
   },
 
   subscribe: (key: string, callback: (value) => void) => {
-    const storageEventCallback = (e: StorageEvent) => {
-      if (e.key === key && e.newValue) {
-        callback(JSON.parse(e.newValue))
+    const storageEventCallback = (event: StorageEvent) => {
+      if (event.key === key && event.newValue) {
+        callback(JSON.parse(event.newValue))
       }
     }
     window.addEventListener('storage', storageEventCallback)
@@ -30,7 +30,9 @@ const storage = {
 }
 
 export const playgroundPositionAtom = atomWithStorage('position', null, storage)
+
 export const playgroundListAtom = atomWithStorage('list', [], storage)
 
 export const usePlaygroundPosition = () => useAtom(playgroundPositionAtom)
+
 export const usePlaygroundList = () => useAtom(playgroundListAtom)

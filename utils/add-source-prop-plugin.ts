@@ -25,7 +25,6 @@ export type Result = {
 }
 
 const TRACE_ID = '__jsxSource'
-const FILE_NAME_ID = '__jsxFileName'
 
 function makeTrace({ startLine, startColumn, endLine, endColumn }) {
   const startLineProperty = t.objectProperty(
@@ -74,20 +73,6 @@ export function addSourceProp(): PluginObj<PluginPass> {
             path.node.openingElement.name.name !== 'Fragment' &&
             path.node.openingElement.name.property?.name !== 'Fragment'
           ) {
-            if (!state.fileNameIdentifier) {
-              const fileName = state.filename || ''
-              const fileNameIdentifier =
-                path.scope.generateUidIdentifier(FILE_NAME_ID)
-              const scope = path.hub.getScope()
-              if (scope) {
-                scope.push({
-                  id: fileNameIdentifier,
-                  init: t.stringLiteral(fileName),
-                })
-              }
-              state.fileNameIdentifier = fileNameIdentifier
-            }
-
             const position = {
               startLine: path.node.loc.start.line,
               startColumn: path.node.loc.start.column,
