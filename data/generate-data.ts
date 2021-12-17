@@ -82,7 +82,7 @@ export function getReactFunctionDeclaration(
 
   if (Node.isFunctionDeclaration(declaration)) {
     const name = declaration.getName()
-    if (name[0] === name[0].toUpperCase()) {
+    if (/[A-Z]/.test(name.charAt(0))) {
       return declaration
     }
   }

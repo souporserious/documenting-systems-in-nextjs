@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { decode } from 'base64-url'
 import { useRouter } from 'next/router'
 import { executeCode } from 'utils/execute-code'
-import { usePlaygroundList } from 'atoms'
+import { usePlaygroundElements } from 'atoms'
 import * as components from 'components'
 import * as hooks from 'hooks'
 
@@ -13,7 +13,7 @@ export default function Preview() {
   const [error, setError] = useState(null)
   const [preview, setPreview] = useState(null)
   const router = useRouter()
-  const [, setList] = usePlaygroundList()
+  const [, setElements] = usePlaygroundElements()
 
   /** Decode "code" query parameter */
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function Preview() {
         components,
         hooks,
       },
-      ({ list }) => setList(list)
+      setElements
     )
       .then((Preview: React.ComponentType) => {
         setPreview(<Preview />)

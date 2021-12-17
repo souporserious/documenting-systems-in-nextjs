@@ -19,11 +19,25 @@ export function CreateElement({ originalType, __jsxSource, ...props }) {
     onMouseOut: () => {
       setPosition(null)
     },
-    style: {
-      boxShadow: active ? '0 0 0 2px #00bfff' : undefined,
-    },
   }
-  return React.createElement(originalType, mergeProps(props, playgroundProps))
+  const outlineShadow = '0 0 0 2px #5a8fff'
+  const shadows = []
+
+  if (props.style?.boxShadow) {
+    shadows.push(props.style.boxShadow)
+  }
+
+  if (active) {
+    shadows.push(outlineShadow)
+  }
+
+  return React.createElement(originalType, {
+    ...mergeProps(props, playgroundProps),
+    style: {
+      ...props.style,
+      boxShadow: shadows.join(', '),
+    },
+  })
 }
 
 /**

@@ -3,7 +3,7 @@ import * as React from 'react'
 import loader from '@monaco-editor/loader'
 import { useRouter } from 'next/router'
 import { kebabCase } from 'case-anything'
-import { usePlaygroundList, usePlaygroundPosition } from 'atoms'
+import { usePlaygroundElements, usePlaygroundPosition } from 'atoms'
 import { initializeMonaco } from '../utils/initialize-monaco'
 import type { Monaco } from '../utils/initialize-monaco'
 
@@ -32,7 +32,7 @@ export function useMonaco({
   const monacoRef = React.useRef<Monaco>(null)
   const editorRef = React.useRef<ReturnType<Monaco['editor']['create']>>(null)
   const decorationsRef = React.useRef([])
-  const [list] = usePlaygroundList()
+  const [elements] = usePlaygroundElements()
   const [position, setPosition] = usePlaygroundPosition()
 
   React.useEffect(() => {
@@ -94,7 +94,7 @@ export function useMonaco({
     const handleChangeCursor = editorRef.current.onDidChangeCursorPosition(
       () => {
         const { lineNumber, column } = editorRef.current.getPosition()
-        const element = list
+        const element = elements.list
           .slice()
           .reverse()
           .find((element) => {
@@ -111,12 +111,22 @@ export function useMonaco({
         /**
          * TODO: Need to account for multiple cursors.
          */
-        setPosition(element ? element.position : null)
+        if (element.type === 'component' || element.type === 'instance') {
+          const componentIndex = elements.list.findIndex(
+            (node) => node.type === 'component' && node.name === element.name
+          )
+          const firstElement = elements.list[componentIndex + 1]
+          if (firstElement) {
+            setPosition(firstElement.position)
+          }
+        } else {
+          setPosition(element ? element.position : null)
+        }
       }
     )
 
     return () => handleChangeCursor.dispose()
-  }, [isMounting, list])
+  }, [isMounting, elements?.list])
 
   React.useEffect(() => {
     if (isMounting) return

@@ -51,6 +51,8 @@ function makeTrace({ startLine, startColumn, endLine, endColumn }) {
   ])
 }
 
+const isComponent = (name) => /[A-Z]/.test(name.charAt(0))
+
 export function addSourceProp(): PluginObj<PluginPass> {
   return {
     inherits: jsx,
@@ -67,38 +69,79 @@ export function addSourceProp(): PluginObj<PluginPass> {
           })
         },
       },
-      JSXElement: {
-        enter(path, state) {
-          if (
-            path.node.openingElement.name.name !== 'Fragment' &&
-            path.node.openingElement.name.property?.name !== 'Fragment'
-          ) {
-            const position = {
-              startLine: path.node.loc.start.line,
-              startColumn: path.node.loc.start.column,
-              endLine: path.node.loc.end.line,
-              endColumn: path.node.loc.end.column,
-            }
-            const trace = makeTrace(position)
+      FunctionDeclaration: {
+        enter(path) {
+          const name = path.node.id.name
 
-            path.node.openingElement.attributes.push(
-              t.jsxAttribute(
-                t.jsxIdentifier(TRACE_ID),
-                t.jsxExpressionContainer(trace)
-              )
-            )
-
-            this.tree.push({
-              name: path.node.openingElement.name.name,
-              position,
-              children: [],
-            })
-
-            this.list.push({
-              name: path.node.openingElement.name.name,
-              position,
-            })
+          if (!isComponent(name)) {
+            return
           }
+
+          const position = {
+            startLine: path.node.loc.start.line,
+            startColumn: path.node.loc.start.column,
+            endLine: path.node.loc.end.line,
+            endColumn: path.node.loc.end.column,
+          }
+
+          this.tree.push({
+            name,
+            position,
+            children: [],
+            type: 'component',
+          })
+
+          this.list.push({
+            name,
+            position,
+            type: 'component',
+          })
+        },
+        exit() {
+          if (this.tree.length > 1) {
+            const child = this.tree.pop()
+            const parent = this.tree[this.tree.length - 1]
+            parent.children.push(child)
+          }
+        },
+      },
+      JSXElement: {
+        enter(path) {
+          if (
+            path.node.openingElement.name.name === 'Fragment' ||
+            path.node.openingElement.name.property?.name === 'Fragment'
+          ) {
+            return
+          }
+
+          const name = path.node.openingElement.name.name
+          const position = {
+            startLine: path.node.loc.start.line,
+            startColumn: path.node.loc.start.column,
+            endLine: path.node.loc.end.line,
+            endColumn: path.node.loc.end.column,
+          }
+          const trace = makeTrace(position)
+
+          path.node.openingElement.attributes.push(
+            t.jsxAttribute(
+              t.jsxIdentifier(TRACE_ID),
+              t.jsxExpressionContainer(trace)
+            )
+          )
+
+          this.tree.push({
+            name,
+            position,
+            children: [],
+            type: 'element',
+          })
+
+          this.list.push({
+            name,
+            position,
+            type: isComponent(name) ? 'instance' : 'element',
+          })
         },
         exit() {
           if (this.tree.length > 1) {

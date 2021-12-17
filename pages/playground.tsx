@@ -8,14 +8,22 @@ import { allComponents } from '.data/components'
 const initialCodeString = `
 import React from 'react'
 
+function Welcome() {
+  return (
+    <h1>
+      <span>Hello</span> <span>Playground</span>
+    </h1>
+  )
+}
+
 export default function App() {
   return (
-    <div>
-      <h1>Hello</h1><h2>World</h2>
-      <h3>
+    <div style={{ textAlign: 'center' }}>
+      <Welcome />
+      <h2>
         Start editing to see some
         magic happen!
-      </h3>
+      </h2>
     </div>
   )
 }
@@ -120,7 +128,7 @@ function Preview({ code }) {
     <iframe
       ref={frameRef}
       src={frameSource.current}
-      style={{ width: '100%', height: '100%' }}
+      style={{ width: '100%', height: '100%', border: 'none' }}
     />
   )
 }
