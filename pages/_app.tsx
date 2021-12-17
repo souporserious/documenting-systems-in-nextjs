@@ -6,6 +6,24 @@ import { allComponents, allHooks } from '.data'
 
 import '../app.css'
 
+function Nav({ children }) {
+  return (
+    <nav role="navigation">
+      <ul>{children}</ul>
+    </nav>
+  )
+}
+
+function NavLink({ to, children }) {
+  return (
+    <li>
+      <Link href={to} passHref>
+        <a style={{ display: 'flex', fontSize: 18, padding: 8 }}>{children}</a>
+      </Link>
+    </li>
+  )
+}
+
 export default function App({ Component, pageProps }) {
   const router = useRouter()
 
@@ -23,28 +41,22 @@ export default function App({ Component, pageProps }) {
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr' }}>
-      <nav>
-        <Link href="/" passHref>
-          <a style={{ display: 'flex', fontSize: 18, padding: 8 }}>👻</a>
-        </Link>
-        <Link href={`/playground`} passHref>
-          <a style={{ display: 'flex', fontSize: 18, padding: 8 }}>
-            Playground
-          </a>
-        </Link>
-        <h2>Components</h2>
+      <Nav>
+        <NavLink to="/">👻</NavLink>
+        <NavLink to="/playground">Playground</NavLink>
+        <h3 style={{ padding: 8 }}>Components</h3>
         {allComponents.map(({ name, slug }) => (
-          <Link key={name} href={`/components/${slug}`} passHref>
-            <a style={{ display: 'flex', fontSize: 18, padding: 8 }}>{name}</a>
-          </Link>
+          <NavLink key={name} to={slug}>
+            {name}
+          </NavLink>
         ))}
-        <h2>Hooks</h2>
+        <h3 style={{ padding: 8 }}>Hooks</h3>
         {allHooks.map(({ name, slug }) => (
-          <Link key={name} href={`/hooks/${slug}`} passHref>
-            <a style={{ display: 'flex', fontSize: 18, padding: 8 }}>{name}</a>
-          </Link>
+          <NavLink key={name} to={`/hooks/${slug}`}>
+            {name}
+          </NavLink>
         ))}
-      </nav>
+      </Nav>
       <div style={{ padding: 32 }}>
         <Component {...pageProps} />
       </div>

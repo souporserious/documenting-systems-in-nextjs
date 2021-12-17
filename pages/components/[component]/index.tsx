@@ -6,22 +6,34 @@ import { allComponents } from '.data/components'
 export default function Component({ component }) {
   const Component = useComponent(component.readme)
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
       <code>import {`{ ${component.name} }`} from 'components'</code>
       {component.path && (
         <a href={getEditorLink({ path: component.path })}>View Source</a>
       )}
-      {component.readme && <Component />}
-      <h2>Props</h2>
-      {component.props.map((type) => (
-        <div key={type.name}>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <h4 style={{ fontWeight: 600, margin: 0 }}>{type.name}</h4>
-            <code>{type.type}</code>
-          </div>
-          <p style={{ margin: 0 }}>{type.description}</p>
+      <h1>{component.name}</h1>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {component.readme && <Component />}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <h2>Props</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {component.props.map((type) => (
+            <div
+              key={type.name}
+              style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+            >
+              <div style={{ display: 'flex', gap: 8 }}>
+                <h4 style={{ fontWeight: 600, margin: 0 }}>{type.name}</h4>
+                <code>{type.type}</code>
+              </div>
+              {type.description && (
+                <p style={{ margin: 0 }}>{type.description}</p>
+              )}
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
       <h2>Examples</h2>
       {component.examples.map(({ name, slug }) => (
         <Link key={name} href={`${component.slug}/examples/${slug}`} passHref>
@@ -33,7 +45,7 @@ export default function Component({ component }) {
           </a>
         </Link>
       ))}
-    </>
+    </div>
   )
 }
 

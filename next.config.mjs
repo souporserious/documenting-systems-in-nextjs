@@ -7,6 +7,9 @@ const utilsDirectory = process.cwd() + '/utils'
 export default withRemoteRefresh({
   paths: [componentsDirectory, hooksDirectory, utilsDirectory],
 })({
+  experimental: {
+    styledComponents: true,
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
