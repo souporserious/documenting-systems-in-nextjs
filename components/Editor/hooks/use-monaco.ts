@@ -110,15 +110,24 @@ export function useMonaco({
             (node) => node.type === 'component' && node.name === element.name
           )
           /**
-           * TODO: This needs to recursively find the element since it could be another instance.
+           * If the component is not found then we assume it is being imported.
+           * Otherwise we try to find the component in the same file.
            */
-          const firstElement = elements.list[componentIndex + 1]
-          if (firstElement) {
-            setPosition(firstElement.position)
-            setInstancePosition(element.position)
-          } else {
+          if (componentIndex === -1) {
             setPosition(element.position)
             setInstancePosition(null)
+          } else {
+            /**
+             * TODO: This needs to recursively find the element since it could be another instance.
+             */
+            const firstElement = elements.list[componentIndex + 1]
+            if (firstElement) {
+              setPosition(firstElement.position)
+              setInstancePosition(element.position)
+            } else {
+              setPosition(element.position)
+              setInstancePosition(null)
+            }
           }
         } else {
           setPosition(element ? element.position : null)
