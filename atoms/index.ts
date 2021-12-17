@@ -33,6 +33,15 @@ export const playgroundPositionAtom = atomWithStorage('position', null, storage)
 
 export const usePlaygroundPosition = () => useAtom(playgroundPositionAtom)
 
+export const playgroundInstancePositionAtom = atomWithStorage(
+  'instancePosition',
+  null,
+  storage
+)
+
+export const usePlaygroundInstancePosition = () =>
+  useAtom(playgroundInstancePositionAtom)
+
 export const playgroundElementsAtom = atomWithStorage('elements', null, storage)
 
 export const usePlaygroundElements = () => useAtom(playgroundElementsAtom)

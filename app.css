@@ -32,3 +32,7 @@ iframe {
 .line-decorator {
   background: #15367482;
 }
+
+.line-decorator--instance {
+  background: #1536745f;
+}

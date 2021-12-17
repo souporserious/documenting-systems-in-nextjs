@@ -12,12 +12,6 @@ export type MonacoOptions = {
   value?: string
   id?: number
   onChange?: (value: string) => void
-  decorationRange?: {
-    startLine: number
-    startColumn: number
-    endLine: number
-    endColumn: number
-  }
 }
 
 export function useMonaco({
@@ -25,7 +19,6 @@ export function useMonaco({
   value,
   id,
   onChange,
-  decorationRange,
 }: MonacoOptions) {
   const router = useRouter()
   const [isMounting, setIsMounting] = React.useState(true)
@@ -34,6 +27,7 @@ export function useMonaco({
   const decorationsRef = React.useRef([])
   const [elements] = usePlaygroundElements()
   const [position, setPosition] = usePlaygroundPosition()
+  const [instancePosition, setInstancePosition] = React.useState(null)
 
   React.useEffect(() => {
     const cancelable = loader.init()
@@ -111,16 +105,24 @@ export function useMonaco({
         /**
          * TODO: Need to account for multiple cursors.
          */
-        if (element.type === 'component' || element.type === 'instance') {
+        if (element?.type === 'component' || element?.type === 'instance') {
           const componentIndex = elements.list.findIndex(
             (node) => node.type === 'component' && node.name === element.name
           )
+          /**
+           * TODO: This needs to recursively find the element since it could be another instance.
+           */
           const firstElement = elements.list[componentIndex + 1]
           if (firstElement) {
             setPosition(firstElement.position)
+            setInstancePosition(element.position)
+          } else {
+            setPosition(element.position)
+            setInstancePosition(null)
           }
         } else {
           setPosition(element ? element.position : null)
+          setInstancePosition(null)
         }
       }
     )
@@ -173,24 +175,41 @@ export function useMonaco({
   React.useEffect(() => {
     if (isMounting) return
 
+    const ranges = []
+
+    if (position) {
+      ranges.push({
+        range: new monacoRef.current.Range(
+          position.startLine,
+          position.startColumn,
+          position.endLine,
+          position.endColumn
+        ),
+        options: {
+          className: 'line-decorator',
+          isWholeLine: true,
+        },
+      })
+    }
+
+    if (instancePosition) {
+      ranges.push({
+        range: new monacoRef.current.Range(
+          instancePosition.startLine,
+          instancePosition.startColumn,
+          instancePosition.endLine,
+          instancePosition.endColumn
+        ),
+        options: {
+          className: 'line-decorator--instance',
+          isWholeLine: true,
+        },
+      })
+    }
+
     decorationsRef.current = editorRef.current.deltaDecorations(
       decorationsRef.current,
-      decorationRange
-        ? [
-            {
-              range: new monacoRef.current.Range(
-                decorationRange.startLine,
-                decorationRange.startColumn,
-                decorationRange.endLine,
-                decorationRange.endColumn
-              ),
-              options: {
-                className: 'line-decorator',
-                isWholeLine: true,
-              },
-            },
-          ]
-        : []
+      ranges
     )
-  }, [decorationRange, isMounting])
+  }, [position, instancePosition, isMounting])
 }
