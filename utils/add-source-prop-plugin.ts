@@ -27,10 +27,7 @@ export type Result = {
 const TRACE_ID = '__jsxSource'
 const FILE_NAME_ID = '__jsxFileName'
 
-function makeTrace(
-  fileNameIdentifier,
-  { startLine, startColumn, endLine, endColumn }
-) {
+function makeTrace({ startLine, startColumn, endLine, endColumn }) {
   const startLineProperty = t.objectProperty(
     t.identifier('startLine'),
     startLine != null ? t.numericLiteral(startLine) : t.nullLiteral()
@@ -97,7 +94,7 @@ export function addSourceProp(): PluginObj<PluginPass> {
               endLine: path.node.loc.end.line,
               endColumn: path.node.loc.end.column,
             }
-            const trace = makeTrace(state.fileNameIdentifier, position)
+            const trace = makeTrace(position)
 
             path.node.openingElement.attributes.push(
               t.jsxAttribute(

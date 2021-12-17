@@ -33,7 +33,7 @@ export function useMonaco({
   const editorRef = React.useRef<ReturnType<Monaco['editor']['create']>>(null)
   const decorationsRef = React.useRef([])
   const [list] = usePlaygroundList()
-  const [, setPosition] = usePlaygroundPosition()
+  const [position, setPosition] = usePlaygroundPosition()
 
   React.useEffect(() => {
     const cancelable = loader.init()
@@ -106,9 +106,7 @@ export function useMonaco({
          * TODO: account for multiple elements (columns), this only works for
          * one element right now. Also need to account for multiple cursors.
          */
-        if (element) {
-          setPosition(element.position)
-        }
+        setPosition(element ? element.position : null)
       }
     )
 
@@ -160,37 +158,24 @@ export function useMonaco({
   React.useEffect(() => {
     if (isMounting) return
 
-    const oldDecorations = decorationsRef.current
-
-    if (decorationRange) {
-      decorationsRef.current = [
-        {
-          range: new monacoRef.current.Range(
-            decorationRange.startLine,
-            decorationRange.startColumn,
-            decorationRange.endLine,
-            decorationRange.endColumn
-          ),
-          options: {
-            className: 'line-decorator',
-            isWholeLine: true,
-          },
-        },
-      ]
-    } else {
-      decorationsRef.current = []
-    }
-
-    editorRef.current.deltaDecorations(oldDecorations, decorationsRef.current)
-
-    return () => {
-      // Hack for now to remove decorations correctly
-      // https://github.com/microsoft/monaco-editor/issues/269#issuecomment-530098836
-      Array.from(document.querySelectorAll('.line-decorator')).forEach(
-        (element) => {
-          element.classList.remove('line-decorator')
-        }
-      )
-    }
+    decorationsRef.current = editorRef.current.deltaDecorations(
+      decorationsRef.current,
+      decorationRange
+        ? [
+            {
+              range: new monacoRef.current.Range(
+                decorationRange.startLine,
+                decorationRange.startColumn,
+                decorationRange.endLine,
+                decorationRange.endColumn
+              ),
+              options: {
+                className: 'line-decorator',
+                isWholeLine: true,
+              },
+            },
+          ]
+        : []
+    )
   }, [decorationRange, isMounting])
 }
