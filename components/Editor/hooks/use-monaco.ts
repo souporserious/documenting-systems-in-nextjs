@@ -20,7 +20,6 @@ export function useMonaco({
   id,
   onChange,
 }: MonacoOptions) {
-  const router = useRouter()
   const [isMounting, setIsMounting] = React.useState(true)
   const monacoRef = React.useRef<Monaco>(null)
   const editorRef = React.useRef<ReturnType<Monaco['editor']['create']>>(null)
@@ -46,10 +45,11 @@ export function useMonaco({
               .replace('.d.ts', '') // trim .d.ts suffix from decalaration
               .split('/') // finally split the path into an array
             if (base === 'components' || base === 'hooks') {
-              router.push(
+              window.open(
                 filename === 'index'
                   ? `/${base}`
-                  : `/${base}/${kebabCase(filename)}`
+                  : `/${base}/${kebabCase(filename)}`,
+                '_blank'
               )
             }
           },
@@ -178,6 +178,10 @@ export function useMonaco({
       } else {
         editorRef.current.setValue(value)
       }
+
+      /** Clear out highlight ranges when changing the value */
+      setPosition(null)
+      setInstancePosition(null)
     }
   }, [value])
 
