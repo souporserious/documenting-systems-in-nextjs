@@ -15,7 +15,6 @@ export type InitializeMonacoOptions = {
   monaco: Monaco
   defaultValue?: string
   id?: number
-  onChange?: (value: string) => void
   onOpenEditor?: (input: any, source: any) => void
 }
 
@@ -24,7 +23,6 @@ export async function initializeMonaco({
   monaco,
   defaultValue = '',
   id = 0,
-  onChange = () => null,
   onOpenEditor = () => null,
 }: InitializeMonacoOptions) {
   // @ts-ignore
@@ -119,24 +117,13 @@ export async function initializeMonaco({
     noSyntaxValidation: false,
   })
 
-  const onChangeSubscription = editor.onDidChangeModelContent(() => {
-    onChange(editor.getValue())
-  })
-  const onKeyDownSubscription = editor.onKeyDown(async (event) => {
-    /** Format file on save (metaKey + s) */
-    if (event.keyCode === 49 && event.metaKey) {
-      event.preventDefault()
-      editor.getAction('editor.action.formatDocument').run()
-    }
-  })
-
   editor.focus()
 
   /**
    * Load React types
    * alternatively, you can use: https://github.com/lukasbach/monaco-editor-auto-typings
    */
-  fetch('https://unpkg.com/browse/@types/react@17.0.37/index.d.ts')
+  fetch('https://unpkg.com/@types/react@17.0.37/index.d.ts')
     .then((response) => response.text())
     .then((types) => {
       monaco.languages.typescript.typescriptDefaults.addExtraLib(
@@ -155,13 +142,5 @@ export async function initializeMonaco({
     )
   })
 
-  return {
-    editor,
-    dispose() {
-      onChangeSubscription.dispose()
-      onKeyDownSubscription.dispose()
-      editor.getModel()?.dispose()
-      editor.dispose()
-    },
-  }
+  return editor
 }

@@ -3,6 +3,7 @@ import * as React from 'react'
 import loader from '@monaco-editor/loader'
 import { useRouter } from 'next/router'
 import { kebabCase } from 'case-anything'
+import { usePlaygroundList, usePlaygroundPosition } from 'atoms'
 import { initializeMonaco } from '../utils/initialize-monaco'
 import type { Monaco } from '../utils/initialize-monaco'
 
@@ -30,20 +31,21 @@ export function useMonaco({
   const [isMounting, setIsMounting] = React.useState(true)
   const monacoRef = React.useRef<Monaco>(null)
   const editorRef = React.useRef<ReturnType<Monaco['editor']['create']>>(null)
-  const disposeRef = React.useRef(null)
   const decorationsRef = React.useRef([])
+  const [list] = usePlaygroundList()
+  const [, setPosition] = usePlaygroundPosition()
 
   React.useEffect(() => {
     const cancelable = loader.init()
 
     cancelable
       .then(async (monaco) => {
-        const result = await initializeMonaco({
+        monacoRef.current = monaco
+        editorRef.current = await initializeMonaco({
           container: containerRef.current,
           monaco,
           defaultValue: value,
           id,
-          onChange,
           onOpenEditor: (input) => {
             const [base, filename] = input.resource.path
               .replace('/node_modules/', '') // trim node_modules prefix used by Monaco Editor
@@ -58,9 +60,6 @@ export function useMonaco({
             }
           },
         })
-        monacoRef.current = monaco
-        editorRef.current = result.editor
-        disposeRef.current = result.dispose
         setIsMounting(false)
       })
       .catch((error) => {
@@ -71,12 +70,74 @@ export function useMonaco({
 
     return () => {
       if (editorRef.current) {
-        disposeRef.current()
+        editorRef.current.getModel()?.dispose()
+        editorRef.current.dispose()
       } else {
         cancelable.cancel()
       }
     }
   }, [])
+
+  React.useEffect(() => {
+    if (isMounting) return
+
+    const handleChange = editorRef.current.onDidChangeModelContent(() => {
+      onChange(editorRef.current.getValue())
+    })
+
+    return () => handleChange.dispose()
+  }, [isMounting])
+
+  React.useEffect(() => {
+    if (isMounting) return
+
+    const handleChangeCursor = editorRef.current.onDidChangeCursorPosition(
+      () => {
+        const { lineNumber } = editorRef.current.getPosition()
+        const element = list
+          .slice()
+          .reverse()
+          .find((element) => {
+            const { startLine, endLine } = element.position
+            return lineNumber >= startLine && lineNumber <= endLine
+          })
+
+        /**
+         * TODO: account for multiple elements (columns), this only works for
+         * one element right now. Also need to account for multiple cursors.
+         */
+        if (element) {
+          setPosition(element.position)
+        }
+      }
+    )
+
+    return () => handleChangeCursor.dispose()
+  }, [isMounting, list])
+
+  React.useEffect(() => {
+    if (isMounting) return
+
+    const handleBlur = editorRef.current.onDidBlurEditorWidget(() => {
+      setPosition(null)
+    })
+
+    return () => handleBlur.dispose()
+  }, [isMounting])
+
+  React.useEffect(() => {
+    if (isMounting) return
+
+    const handleKeyDown = editorRef.current.onKeyDown(async (event) => {
+      /** Format file on save (metaKey + s) */
+      if (event.keyCode === 49 && event.metaKey) {
+        event.preventDefault()
+        editorRef.current.getAction('editor.action.formatDocument').run()
+      }
+    })
+
+    return () => handleKeyDown.dispose()
+  }, [isMounting])
 
   React.useEffect(() => {
     if (editorRef.current && editorRef.current.getValue() !== value) {
@@ -131,5 +192,5 @@ export function useMonaco({
         }
       )
     }
-  }, [decorationRange, isMounting, value])
+  }, [decorationRange, isMounting])
 }
