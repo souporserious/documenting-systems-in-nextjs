@@ -8,7 +8,7 @@ import '../app.css'
 
 function Nav({ children }) {
   return (
-    <nav role="navigation">
+    <nav role="navigation" style={{ padding: 16 }}>
       <ul>{children}</ul>
     </nav>
   )
@@ -44,20 +44,24 @@ export default function App({ Component, pageProps }) {
       <Nav>
         <NavLink to="/">👻</NavLink>
         <NavLink to="/playground">Playground</NavLink>
-        <h3 style={{ padding: 8 }}>Components</h3>
+        <li>
+          <h3 style={{ padding: 8 }}>Components</h3>
+        </li>
         {allComponents.map(({ name, slug }) => (
           <NavLink key={name} to={slug}>
             {name}
           </NavLink>
         ))}
-        <h3 style={{ padding: 8 }}>Hooks</h3>
+        <li>
+          <h3 style={{ padding: 8 }}>Hooks</h3>
+        </li>
         {allHooks.map(({ name, slug }) => (
           <NavLink key={name} to={`/hooks/${slug}`}>
             {name}
           </NavLink>
         ))}
       </Nav>
-      <div style={{ padding: 32 }}>
+      <div style={{ padding: 40 }}>
         <Component {...pageProps} />
       </div>
     </div>

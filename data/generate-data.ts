@@ -3,13 +3,7 @@ import * as path from 'path'
 import chokidar from 'chokidar'
 import { camelCase, kebabCase } from 'case-anything'
 import { performance } from 'perf_hooks'
-import {
-  Project,
-  Node,
-  FunctionDeclaration,
-  CallExpression,
-  ArrowFunction,
-} from 'ts-morph'
+import { Project, Node, CallExpression } from 'ts-morph'
 import { transformCode } from './transform-code.js'
 import { getComponentExamples } from './get-component-examples.js'
 import { getComponentReadme } from './get-component-readme.js'
@@ -27,11 +21,16 @@ const project = new Project({
   tsConfigFilePath: 'tsconfig.json',
   skipAddingFilesFromTsConfig: true,
 })
+const typeChecker = project.getTypeChecker()
 
 project.addSourceFilesAtPaths(['components/**/*.{ts,tsx}', 'hooks/**/*.ts'])
 
 const componentsSourceFile = project.getSourceFile('components/index.ts')
 const hooksSourceFile = project.getSourceFile('hooks/index.ts')
+
+export function isComponent(name) {
+  return /[A-Z]/.test(name.charAt(0))
+}
 
 export function isForwardRefExpression(initializer) {
   if (Node.isCallExpression(initializer)) {
@@ -63,70 +62,71 @@ export function isForwardRefExpression(initializer) {
   return false
 }
 
-export function getReactFunctionDeclaration(
-  declaration
-): FunctionDeclaration | ArrowFunction | null {
+export function getReactFunctionDeclaration(declaration: Node): Node {
   if (Node.isVariableDeclaration(declaration)) {
+    const name = declaration.getName()
     const initializer = declaration.getInitializer()
 
-    /**
-     * If we're dealing with a 'forwardRef' call we take the first argument of
-     * the function since that is the component declaration.
-     */
-    if (isForwardRefExpression(initializer)) {
-      const callExpression = initializer as CallExpression
-      const [declaration] = callExpression.getArguments()
-      return declaration as FunctionDeclaration | ArrowFunction
+    if (isComponent(name)) {
+      /**
+       * If we're dealing with a 'forwardRef' call we take the first argument of
+       * the function since that is the component declaration.
+       */
+      if (isForwardRefExpression(initializer)) {
+        const callExpression = initializer as CallExpression
+        const [declaration] = callExpression.getArguments()
+        return declaration
+      } else if (name !== 'GlobalStyles') {
+        return declaration
+      }
     }
   }
 
   if (Node.isFunctionDeclaration(declaration)) {
     const name = declaration.getName()
-    if (/[A-Z]/.test(name.charAt(0))) {
+    if (isComponent(name)) {
       return declaration
     }
   }
-
-  return null
 }
 
-export function getReactComponentTypes(
-  declaration: FunctionDeclaration | ArrowFunction
-) {
-  const [props] = declaration.getParameters()
-  const type = props.getType()
-  return (
-    type
-      .getProperties()
-      /** Filter out props from packages in node_modules */
-      .filter((prop) => {
-        const propDeclarations = prop.getDeclarations()
-        if (propDeclarations !== undefined && propDeclarations.length > 0) {
-          const hasPropAdditionalDescription = propDeclarations.some(
-            (declaration) => {
-              return !declaration
-                .getSourceFile()
-                .getFilePath()
-                .includes('node_modules')
-            }
-          )
-          return hasPropAdditionalDescription
-        }
-        return true
-      })
-      .map((prop) => {
-        const [propDeclaration] = prop.getDeclarations()
-        if (propDeclaration) {
-          const [commentRange] = propDeclaration.getLeadingCommentRanges()
-          return {
-            name: prop.getName(),
-            type: prop.getTypeAtLocation(declaration).getText(),
-            comment: commentRange?.getText() || null,
+export function getReactComponentTypes(declaration: Node) {
+  const [propsSignature] = declaration.getType().getCallSignatures()
+  const [props] = propsSignature.getParameters()
+  if (props) {
+    const valueDeclaration = props.getValueDeclaration()
+    const propsType = typeChecker.getTypeOfSymbolAtLocation(
+      props,
+      valueDeclaration
+    )
+    return (
+      propsType
+        /** TODO: account for when there aren't any explicit types like in CreateElement */
+        .getApparentProperties()
+        .map((prop) => {
+          const [propDeclaration] = prop.getDeclarations()
+          if (
+            propDeclaration === undefined ||
+            propDeclaration
+              .getSourceFile()
+              .getFilePath()
+              .includes('node_modules')
+          ) {
+            return null
           }
-        }
-      })
-      .filter(Boolean)
-  )
+          if (propDeclaration) {
+            const [commentRange] = propDeclaration.getLeadingCommentRanges()
+            return {
+              name: prop.getName(),
+              type: prop.getTypeAtLocation(declaration).getText(),
+              comment: commentRange?.getText() || null,
+            }
+          }
+        })
+        .filter(Boolean)
+    )
+  }
+  return null
 }
 
 export async function getComponents() {
