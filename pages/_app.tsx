@@ -48,7 +48,7 @@ export default function App({ Component, pageProps }) {
           <h3 style={{ padding: 8 }}>Components</h3>
         </li>
         {allComponents.map(({ name, slug }) => (
-          <NavLink key={name} to={slug}>
+          <NavLink key={name} to={`/components/${slug}`}>
             {name}
           </NavLink>
         ))}
