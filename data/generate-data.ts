@@ -76,7 +76,7 @@ export function getReactFunctionDeclaration(declaration: Node): Node {
         const callExpression = initializer as CallExpression
         const [declaration] = callExpression.getArguments()
         return declaration
-      } else if (name !== 'GlobalStyles') {
+      } else {
         return declaration
       }
     }
@@ -91,8 +91,15 @@ export function getReactFunctionDeclaration(declaration: Node): Node {
 }
 
 export function getReactComponentTypes(declaration: Node) {
-  const [propsSignature] = declaration.getType().getCallSignatures()
+  const signatures = declaration.getType().getCallSignatures()
+
+  if (signatures.length === 0) {
+    return null
+  }
+
+  const [propsSignature] = signatures
   const [props] = propsSignature.getParameters()
+
   if (props) {
     const valueDeclaration = props.getValueDeclaration()
     const propsType = typeChecker.getTypeOfSymbolAtLocation(

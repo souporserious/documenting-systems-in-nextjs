@@ -15,25 +15,27 @@ export default function Component({ component }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {component.readme && <Component />}
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-        <h2>Props</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {component.props.map((type) => (
-            <div
-              key={type.name}
-              style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
-            >
-              <div style={{ display: 'flex', gap: 8 }}>
-                <h4 style={{ fontWeight: 600, margin: 0 }}>{type.name}</h4>
-                <code>{type.type}</code>
+      {component.props && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <h2>Props</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {component.props.map((type) => (
+              <div
+                key={type.name}
+                style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+              >
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <h4 style={{ fontWeight: 600, margin: 0 }}>{type.name}</h4>
+                  <code>{type.type}</code>
+                </div>
+                {type.description && (
+                  <p style={{ margin: 0 }}>{type.description}</p>
+                )}
               </div>
-              {type.description && (
-                <p style={{ margin: 0 }}>{type.description}</p>
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
       {component.examples.length > 0 && (
         <>
           <h2>Examples</h2>
