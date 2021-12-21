@@ -61,7 +61,7 @@ export default function App({ Component, pageProps }) {
           </NavLink>
         ))}
       </Nav>
-      <div style={{ padding: 40 }}>
+      <div style={{ maxWidth: '80ch', padding: 40 }}>
         <Component {...pageProps} />
       </div>
     </div>

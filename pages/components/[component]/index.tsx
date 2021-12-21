@@ -34,17 +34,25 @@ export default function Component({ component }) {
           ))}
         </div>
       </div>
-      <h2>Examples</h2>
-      {component.examples.map(({ name, slug }) => (
-        <Link key={name} href={`${component.slug}/examples/${slug}`} passHref>
-          <a style={{ display: 'flex', fontSize: 32, padding: 16 }}>
-            <iframe
-              src={`${component.slug}/examples/${slug}`}
-              style={{ pointerEvents: 'none' }}
-            />
-          </a>
-        </Link>
-      ))}
+      {component.examples.length > 0 && (
+        <>
+          <h2>Examples</h2>
+          {component.examples.map(({ name, slug }) => (
+            <Link
+              key={name}
+              href={`${component.slug}/examples/${slug}`}
+              passHref
+            >
+              <a style={{ display: 'flex', fontSize: 32, padding: 16 }}>
+                <iframe
+                  src={`${component.slug}/examples/${slug}`}
+                  style={{ pointerEvents: 'none' }}
+                />
+              </a>
+            </Link>
+          ))}
+        </>
+      )}
     </div>
   )
 }
