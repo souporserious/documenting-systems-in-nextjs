@@ -3,11 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "predev": "yarn prebuild",
     "dev": "run-p dev:*",
-    "dev:data": "yarn build:data --watch",
-    "dev:next": "next dev",
+    "dev:data": "yarn prebuild --watch",
+    "dev:next": "next dev -p 4000",
+    "prebuild": "node data/build",
     "build": "run-s build:*",
-    "build:data": "node data/build && node data/dist/generate-data",
+    "build:data": "node data/dist",
     "build:next": "next build && next export"
   },
   "dependencies": {
