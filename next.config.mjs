@@ -1,11 +1,9 @@
 import withRemoteRefresh from 'next-remote-refresh'
 
-const componentsDirectory = process.cwd() + '/components'
-const hooksDirectory = process.cwd() + '/hooks'
-const utilsDirectory = process.cwd() + '/utils'
+const dataDirectory = process.cwd() + '/.data'
 
 export default withRemoteRefresh({
-  paths: [componentsDirectory, hooksDirectory, utilsDirectory],
+  paths: [dataDirectory],
 })({
   experimental: {
     styledComponents: true,
