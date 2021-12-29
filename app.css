@@ -14,13 +14,19 @@ h1,
 h2,
 h3,
 p,
-ul {
+ul,
+pre {
   margin: 0;
 }
 
 ul {
   list-style: none;
   padding: 0;
+}
+
+pre {
+  padding: 1rem;
+  border-radius: 0.5rem;
 }
 
 body {

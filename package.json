@@ -40,6 +40,8 @@
     "onigasm": "^2.2.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "rehype-shiki": "^0.0.9",
+    "shiki": "^0.10.0",
     "style-loader": "^3.3.1",
     "styled-components": "^5.3.3",
     "ts-morph": "^13.0.2",
