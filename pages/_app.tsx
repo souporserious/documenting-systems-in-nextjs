@@ -26,15 +26,16 @@ function NavLink({ to, children }) {
 
 export default function App({ Component, pageProps }) {
   const router = useRouter()
+  const isComponents = router.asPath.includes('components')
 
   if (process.env.NODE_ENV === 'development') {
     useRemoteRefresh()
   }
 
   if (
-    router.asPath.includes('playground') ||
+    router.asPath.includes('examples') ||
     router.asPath.includes('preview') ||
-    router.asPath.includes('examples')
+    (router.asPath.includes('playground') && !isComponents)
   ) {
     return <Component {...pageProps} />
   }

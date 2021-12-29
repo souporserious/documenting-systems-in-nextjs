@@ -4,7 +4,7 @@ import { getEditorLink } from 'utils/get-editor-link'
 import { allComponents } from '.data/components'
 
 export default function Component({ component }) {
-  const Component = useComponent(component.readme)
+  const Readme = useComponent(component.readme)
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
       <code>import {`{ ${component.name} }`} from 'components'</code>
@@ -13,7 +13,7 @@ export default function Component({ component }) {
       )}
       <h1>{component.name}</h1>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        {component.readme && <Component />}
+        {component.readme && <Readme />}
       </div>
       {component.props && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>

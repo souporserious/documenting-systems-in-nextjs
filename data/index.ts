@@ -16,7 +16,7 @@ async function writeComponentsData() {
   const components = await getComponents()
 
   if (DEBUG) {
-    console.log('writing data to cache: ', components)
+    console.log('writing components to cache...')
   }
 
   fs.writeFile(
@@ -29,7 +29,7 @@ async function writeHooksData() {
   const hooks = await getHooks()
 
   if (DEBUG) {
-    console.log('writing hooks to cache: ', hooks)
+    console.log('writing hooks to cache...')
   }
 
   fs.writeFile(
@@ -46,7 +46,7 @@ async function writeTypesData() {
   }))
 
   if (DEBUG) {
-    console.log('writing types to cache: ', declarationFiles)
+    console.log('writing types to cache...')
   }
 
   fs.writeFile(
@@ -69,19 +69,24 @@ async function writeData() {
 
 const start = performance.now()
 if (DEBUG) {
-  console.log('start gathering initial hooks: ', start)
+  console.log('start gathering data...')
 }
 
 writeData().then(() => {
   if (DEBUG) {
-    console.log('finished gathering initial hooks: ', performance.now() - start)
+    console.log(
+      `finished gathering data in ${(
+        (performance.now() - start) /
+        1000
+      ).toFixed(2)}s`
+    )
   }
 })
 
 if (process.argv.includes('--watch')) {
   const watcher = chokidar.watch([
-    componentsSourceFile.getDirectoryPath() + '/**/*.(ts|tsx)',
-    hooksSourceFile.getDirectoryPath() + '/**/*.(ts|tsx)',
+    componentsSourceFile.getDirectoryPath() + '/**/*.(ts|tsx|mdx)',
+    hooksSourceFile.getDirectoryPath() + '/**/*.(ts|tsx|mdx)',
   ])
 
   /**
@@ -89,43 +94,63 @@ if (process.argv.includes('--watch')) {
    * for every path that was added.
    */
   watcher.on('ready', function () {
+    if (DEBUG) {
+      console.log('watching for changes...')
+    }
+
     watcher.on('add', async function (addedPath) {
       if (DEBUG) {
         console.log('adding path to project: ', addedPath)
       }
-      project.addSourceFileAtPath(addedPath)
+      if (!addedPath.includes('mdx')) {
+        project.addSourceFileAtPath(addedPath)
+      }
       await writeData()
     })
 
-    watcher.on('remove', async function (removedPath) {
+    watcher.on('unlink', async function (removedPath) {
       if (DEBUG) {
         console.log('removing path from project: ', removedPath)
       }
-      project.removeSourceFile(removedPath)
+      if (!removedPath.includes('mdx')) {
+        const removedSourceFile = project.getSourceFile(removedPath)
+        if (removedSourceFile) {
+          project.removeSourceFile(removedSourceFile)
+        }
+      }
       await writeData()
     })
   })
 
   watcher.on('change', async function (changedPath) {
-    const changedSourceFile = project.getSourceFile(changedPath)
-    if (changedSourceFile) {
-      if (DEBUG) {
-        console.log('refreshing: ', changedPath)
+    if (!changedPath.includes('mdx')) {
+      const changedSourceFile = project.getSourceFile(changedPath)
+      if (changedSourceFile) {
+        if (DEBUG) {
+          console.log('refreshing: ', changedPath)
+        }
+        await changedSourceFile.refreshFromFileSystem()
+      } else if (DEBUG) {
+        console.log('unable to refresh: ', changedPath)
       }
-      await changedSourceFile.refreshFromFileSystem()
     } else if (DEBUG) {
-      console.log('unable to refresh: ', changedPath)
+      console.log('changed path: ', changedPath)
     }
 
     const start = performance.now()
     if (DEBUG) {
-      console.log('start gathering updated hooks: ', start)
+      console.log('start gathering data...')
     }
 
     await writeData()
 
     if (DEBUG) {
-      console.log('end gathering updated hooks: ', performance.now() - start)
+      console.log(
+        `finished updating data in ${(
+          (performance.now() - start) /
+          1000
+        ).toFixed(2)}s`
+      )
     }
   })
 }

@@ -28,11 +28,19 @@ build({
 
 let child = null
 
+function getOption(name) {
+  return process.argv.includes(`--${name}`) ? `--${name}` : undefined
+}
+
 function executeBuildCommand() {
   if (child) {
     child.kill()
   }
-  child = spawn('yarn', ['build:data'], { stdio: 'inherit' })
+  child = spawn(
+    'yarn',
+    ['build:data', getOption('watch'), getOption('debug')].filter(Boolean),
+    { stdio: 'inherit' }
+  )
 }
 
 executeBuildCommand()

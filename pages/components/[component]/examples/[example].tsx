@@ -1,3 +1,4 @@
+import Head from 'next/head'
 import * as React from 'react'
 import { useComponent } from 'hooks'
 import { getEditorLink } from 'utils/get-editor-link'
@@ -8,10 +9,12 @@ export default function Example({ component, example }) {
   const Component = useComponent(example.compiledCode)
   return (
     <>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-        {/* <h2>
+      <Head>
+        <title>
           {pascalCase(component)} / {example.name}
-        </h2> */}
+        </title>
+      </Head>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
         {example.path && (
           <a href={getEditorLink({ path: example.path })}>View Source</a>
         )}
