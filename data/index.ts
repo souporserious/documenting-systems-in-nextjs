@@ -1,5 +1,5 @@
 import chokidar from 'chokidar'
-import { existsSync, mkdirSync, promises as fs } from 'fs'
+import { existsSync, mkdirSync, writeFileSync, promises as fs } from 'fs'
 import { performance } from 'perf_hooks'
 import { getComponents } from './get-components'
 import { getHooks } from './get-hooks'
@@ -19,7 +19,7 @@ async function writeComponentsData() {
     console.log('writing components to cache...')
   }
 
-  fs.writeFile(
+  writeFileSync(
     `${cacheDirectory}/components.ts`,
     `export const allComponents = ${JSON.stringify(components, null, 2)}`
   )
@@ -32,7 +32,7 @@ async function writeHooksData() {
     console.log('writing hooks to cache...')
   }
 
-  fs.writeFile(
+  writeFileSync(
     `${cacheDirectory}/hooks.ts`,
     `export const allHooks = ${JSON.stringify(hooks, null, 2)}`
   )
@@ -49,7 +49,7 @@ async function writeTypesData() {
     console.log('writing types to cache...')
   }
 
-  fs.writeFile(
+  writeFileSync(
     `${cacheDirectory}/types.ts`,
     `export const allTypes = ${JSON.stringify(declarationFiles, null, 2)}`
   )
@@ -59,7 +59,9 @@ async function writeData() {
   await writeComponentsData()
   await writeHooksData()
   await writeTypesData()
-  await fs.writeFile(
+
+  /** Create a barrel export for each data set. */
+  writeFileSync(
     `${cacheDirectory}/index.ts`,
     ['components', 'hooks', 'types']
       .map((name) => `export * from './${name}'`)
