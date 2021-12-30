@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { MDXProvider } from '@mdx-js/react'
 import { useComponent } from 'hooks'
 import { getEditorLink } from 'utils/get-editor-link'
 import { allComponents } from '.data/components'
@@ -19,23 +20,41 @@ export default function Component({ component }) {
       <h1>{component.name}</h1>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {component.readme && (
-          <Readme
+          <MDXProvider
             components={{
               pre: (props) => {
                 const playground = props.children.props.playground
                 const isPlayground = playground !== undefined
                 if (isPlayground) {
+                  const { children, compiledCodeString } = props.children.props
                   return (
-                    <div>
-                      <pre>{props.children}</pre>
-                      <Preview code={props.children.props.compiledCodeString} />
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'minmax(0, auto) minmax(0, auto)',
+                        borderRadius: 8,
+                        boxShadow: '0 0 0 1px #474f6e',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <pre
+                        style={{
+                          borderRadius: 0,
+                          backgroundColor: '#101218',
+                        }}
+                      >
+                        <code>{children}</code>
+                      </pre>
+                      <Preview code={compiledCodeString} />
                     </div>
                   )
                 }
                 return <pre {...props} />
               },
             }}
-          />
+          >
+            <Readme />
+          </MDXProvider>
         )}
       </div>
       {component.props && (

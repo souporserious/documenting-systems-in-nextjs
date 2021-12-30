@@ -28,6 +28,7 @@ async function transformReadme(componentReadmeContents, componentReadmePath) {
     componentReadmeContents
   )
   const xdmOptions: Options = {
+    providerImportSource: '@mdx-js/react',
     remarkPlugins: [[remarkExamplePlugin, { examples }]],
     rehypePlugins: [rehypeMetaPlugin, [shiki, { theme: 'theme/code.json' }]],
   }
@@ -40,10 +41,9 @@ async function transformReadme(componentReadmeContents, componentReadmePath) {
       bundle: true,
       write: false,
       plugins: [xdm(xdmOptions)],
-      external: ['react', 'react-dom'],
+      external: ['react', 'react-dom', '@mdx-js/react'],
     })
-    const decoder = new StringDecoder('utf-8')
-    const bundledReadme = decoder.write(
+    const bundledReadme = new StringDecoder('utf-8').write(
       Buffer.from(result.outputFiles[0].contents)
     )
     return transformCode(bundledReadme)
