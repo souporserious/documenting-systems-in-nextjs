@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as jsxRuntime from 'react/jsx-runtime'
+import * as mdxReact from '@mdx-js/react'
 import * as components from 'components'
 import * as hooks from 'hooks'
 import { getComponent } from 'utils/get-component'
@@ -23,6 +24,7 @@ export function useComponent(codeString) {
       getComponent(codeString, {
         react: React,
         'react/jsx-runtime': jsxRuntime,
+        '@mdx-js/react': mdxReact,
         components,
         hooks,
       }),
