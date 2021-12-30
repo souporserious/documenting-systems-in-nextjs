@@ -4201,6 +4201,11 @@ tree-kill@^1.2.2:
   resolved "https://registry.yarnpkg.com/tree-kill/-/tree-kill-1.2.2.tgz#4ca09a9092c88b73a7cdc5e8a01b507b0790a0cc"
   integrity sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==
 
+tree-visit@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/tree-visit/-/tree-visit-0.1.0.tgz#ec35cfc13548b41ca5eabd5cbd7f83b574a8ed83"
+  integrity sha512-5lARH0BoZY70TwE+MV7v0KRtApSP4LSxC2JLRCUyK6KUCb8f/Qv9dS+PaWx9h3yKyNYjX2/JHwDx8DyQHHFzlw==
+
 trough@^2.0.0:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/trough/-/trough-2.0.2.tgz#94a3aa9d5ce379fc561f6244905b3f36b7458d96"
