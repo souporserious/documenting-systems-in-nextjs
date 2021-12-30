@@ -9,7 +9,8 @@
     "prebuild": "node data/build",
     "build": "yarn build:data && yarn build:next",
     "build:data": "node data/dist",
-    "build:next": "next build && next export"
+    "build:next": "next build && next export",
+    "cli": "node cli/build"
   },
   "dependencies": {
     "@babel/core": "^7.16.5",
@@ -31,6 +32,7 @@
     "concurrently": "^6.5.1",
     "css-loader": "^6.5.1",
     "esbuild": "^0.14.9",
+    "ink": "^3.2.0",
     "jotai": "^1.4.9",
     "monaco-editor": "^0.31.1",
     "monaco-editor-textmate": "^3.0.0",
