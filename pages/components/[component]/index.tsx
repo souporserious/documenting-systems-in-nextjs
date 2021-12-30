@@ -3,6 +3,11 @@ import { useComponent } from 'hooks'
 import { getEditorLink } from 'utils/get-editor-link'
 import { allComponents } from '.data/components'
 
+function Preview({ code }) {
+  const Component = useComponent(code)
+  return Component ? <Component /> : null
+}
+
 export default function Component({ component }) {
   const Readme = useComponent(component.readme)
   return (
@@ -13,7 +18,25 @@ export default function Component({ component }) {
       )}
       <h1>{component.name}</h1>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        {component.readme && <Readme />}
+        {component.readme && (
+          <Readme
+            components={{
+              pre: (props) => {
+                const playground = props.children.props.playground
+                const isPlayground = playground !== undefined
+                if (isPlayground) {
+                  return (
+                    <div>
+                      <pre>{props.children}</pre>
+                      <Preview code={props.children.props.compiledCodeString} />
+                    </div>
+                  )
+                }
+                return <pre {...props} />
+              },
+            }}
+          />
+        )}
       </div>
       {component.props && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
