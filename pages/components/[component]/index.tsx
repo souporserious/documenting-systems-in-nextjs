@@ -1,13 +1,9 @@
 import Link from 'next/link'
 import { MDXProvider } from '@mdx-js/react'
+import { Playground } from 'components'
 import { useComponent } from 'hooks'
-import { getEditorLink } from 'utils/get-editor-link'
-import { allComponents } from '.data/components'
-
-function Preview({ code }) {
-  const Component = useComponent(code)
-  return Component ? <Component /> : null
-}
+import { getEditorLink } from 'utils'
+import { allComponents } from '.data'
 
 export default function Component({ component }) {
   const Readme = useComponent(component.readme)
@@ -23,31 +19,13 @@ export default function Component({ component }) {
           <MDXProvider
             components={{
               pre: (props) => {
-                const playground = props.children.props.playground
-                const isPlayground = playground !== undefined
-                if (isPlayground) {
+                if (props.children.props.playground !== undefined) {
                   const { children, compiledCodeString } = props.children.props
                   return (
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
-                        borderRadius: 8,
-                        boxShadow: '0 0 0 1px #474f6e',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <pre
-                        style={{
-                          borderRadius: 0,
-                          backgroundColor: '#101218',
-                          overflow: 'auto',
-                        }}
-                      >
-                        <code>{children}</code>
-                      </pre>
-                      <Preview code={compiledCodeString} />
-                    </div>
+                    <Playground
+                      code={children}
+                      compiledCodeString={compiledCodeString}
+                    />
                   )
                 }
                 return <pre {...props} />

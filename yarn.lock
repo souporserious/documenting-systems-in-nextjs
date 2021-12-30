@@ -664,6 +664,11 @@
     "@swc/core-win32-ia32-msvc" "1.2.124"
     "@swc/core-win32-x64-msvc" "1.2.124"
 
+"@swc/wasm-web@^1.2.124":
+  version "1.2.124"
+  resolved "https://registry.yarnpkg.com/@swc/wasm-web/-/wasm-web-1.2.124.tgz#e2136dd15170f7bb2464f9c01ae63a3818276b9a"
+  integrity sha512-UNU8JtUFiD0ZU+wUe+dTShosQ07GmZsadrzQkJpoLm/hAVV++3IOTIvZso7plIZ7DJCo+vHy8mSYk1w6FYiXfg==
+
 "@szmarczak/http-timer@^4.0.5":
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/@szmarczak/http-timer/-/http-timer-4.0.6.tgz#b4a914bb62e7c272d4e5989fe4440f812ab1d807"

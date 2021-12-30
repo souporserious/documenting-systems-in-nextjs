@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently 'yarn dev:data' 'yarn dev:next'",
+    "dev": "NODE_ENV=development concurrently 'yarn dev:data' 'yarn dev:next'",
     "dev:data": "yarn prebuild --watch",
     "dev:next": "next dev -p 4000",
     "prebuild": "node data/build",
@@ -22,6 +22,7 @@
     "@monaco-editor/loader": "^1.2.0",
     "@react-aria/utils": "^3.11.0",
     "@swc/core": "^1.2.123",
+    "@swc/wasm-web": "^1.2.124",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
     "@types/styled-components": "^5.1.19",
