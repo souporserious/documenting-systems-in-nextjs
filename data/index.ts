@@ -1,5 +1,5 @@
 import chokidar from 'chokidar'
-import { existsSync, mkdirSync, writeFileSync, promises as fs } from 'fs'
+import { existsSync, mkdirSync, writeFileSync } from 'fs'
 import { performance } from 'perf_hooks'
 import { getComponents } from './get-components'
 import { getHooks } from './get-hooks'

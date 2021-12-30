@@ -31,7 +31,7 @@ export default function Component({ component }) {
                     <div
                       style={{
                         display: 'grid',
-                        gridTemplateColumns: 'minmax(0, auto) minmax(0, auto)',
+                        gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
                         borderRadius: 8,
                         boxShadow: '0 0 0 1px #474f6e',
                         overflow: 'hidden',
@@ -41,6 +41,7 @@ export default function Component({ component }) {
                         style={{
                           borderRadius: 0,
                           backgroundColor: '#101218',
+                          overflow: 'auto',
                         }}
                       >
                         <code>{children}</code>
