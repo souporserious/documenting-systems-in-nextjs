@@ -19,6 +19,7 @@ import { getComponent } from 'utils/get-component'
  * }
  */
 export function useComponent(codeString) {
+  console.log(codeString)
   return React.useMemo(
     () =>
       getComponent(codeString, {

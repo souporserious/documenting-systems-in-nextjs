@@ -40,12 +40,14 @@ export function useCompiledCode(codeString) {
     import('@swc/wasm-web').then(async (module) => {
       await module.default()
       swc.current = module
-      compile(codeString)
+      if (codeString) {
+        compile(codeString)
+      }
     })
   }, [])
 
   React.useEffect(() => {
-    if (swc.current) {
+    if (swc.current && codeString) {
       compile(codeString)
     }
   }, [codeString])

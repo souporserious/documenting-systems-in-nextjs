@@ -11,7 +11,7 @@ export function Playground({
   const localCompiledCodeString = useCompiledCode(
     compiledCodeString ? null : codeString
   )
-  const Preview = useComponent(compiledCodeString ?? localCompiledCodeString)
+  const Preview = useComponent(compiledCodeString || localCompiledCodeString)
   return (
     <div
       style={{
@@ -31,7 +31,7 @@ export function Playground({
       >
         <code>{codeString}</code>
       </pre>
-      <Preview />
+      {Preview ? <Preview /> : null}
     </div>
   )
 }
