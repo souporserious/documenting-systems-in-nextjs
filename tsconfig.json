@@ -17,7 +17,8 @@
     "paths": {
       "hooks": ["hooks/index.ts"],
       "system": ["components/index.ts"],
-      "utils": ["utils/index.ts"]
+      "utils": ["utils/index.ts"],
+      "theme": ["theme/*"]
     },
     "incremental": true
   },

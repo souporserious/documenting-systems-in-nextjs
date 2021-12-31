@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { useCompiledCode, useComponent } from 'hooks'
+import { Editor } from 'components'
 
 export function Playground({
   code,
@@ -15,10 +16,15 @@ export function Playground({
   /** A compiled code string rendered as the preview. */
   compiledCodeString?: string
 }) {
+  const [value, setValue] = React.useState(null)
   const localCompiledCodeString = useCompiledCode(
-    compiledCodeString ? null : codeString
+    compiledCodeString ? value : codeString
   )
-  const Preview = useComponent(compiledCodeString || localCompiledCodeString)
+  const Preview = useComponent(
+    value
+      ? localCompiledCodeString
+      : compiledCodeString || localCompiledCodeString
+  )
   return (
     <div
       style={{
@@ -29,7 +35,15 @@ export function Playground({
         overflow: 'hidden',
       }}
     >
+      <Editor
+        lineNumbers={false}
+        fontSize={13}
+        value={codeString}
+        onChange={setValue}
+      />
+
       <pre
+        onClick={() => setValue(codeString)}
         style={{
           borderRadius: 0,
           backgroundColor: '#101218',
@@ -38,6 +52,7 @@ export function Playground({
       >
         <code>{code || codeString}</code>
       </pre>
+
       {Preview ? <Preview /> : null}
     </div>
   )

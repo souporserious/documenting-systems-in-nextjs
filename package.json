@@ -18,6 +18,7 @@
     "@babel/preset-typescript": "^7.16.5",
     "@babel/standalone": "^7.16.6",
     "@babel/types": "^7.16.0",
+    "@leafac/rehype-shiki": "^2.1.0",
     "@mdx-js/react": "^2.0.0-rc.2",
     "@monaco-editor/loader": "^1.2.0",
     "@react-aria/utils": "^3.11.0",

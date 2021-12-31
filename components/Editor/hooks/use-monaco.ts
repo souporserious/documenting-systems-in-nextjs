@@ -11,6 +11,8 @@ export type MonacoOptions = {
   containerRef: React.RefObject<HTMLElement>
   value?: string
   id?: number
+  lineNumbers?: boolean
+  fontSize?: number
   onChange?: (value: string) => void
 }
 
@@ -18,6 +20,8 @@ export function useMonaco({
   containerRef,
   value,
   id,
+  lineNumbers,
+  fontSize,
   onChange,
 }: MonacoOptions) {
   const [isMounting, setIsMounting] = React.useState(true)
@@ -39,6 +43,8 @@ export function useMonaco({
           monaco,
           defaultValue: value,
           id,
+          lineNumbers,
+          fontSize,
           onOpenEditor: (input) => {
             const [base, filename] = input.resource.path
               .replace('/node_modules/', '') // trim node_modules prefix used by Monaco Editor

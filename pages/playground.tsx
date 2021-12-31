@@ -99,7 +99,11 @@ export default function Playground() {
           </ul>
         </nav>
       </aside>
-      <Editor value={code} onChange={(value) => setCode(value)} />
+      <Editor
+        height="100vh"
+        value={code}
+        onChange={(value) => setCode(value)}
+      />
       <Preview code={code} />
     </div>
   )

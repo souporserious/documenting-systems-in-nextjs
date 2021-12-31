@@ -20,10 +20,12 @@ export default function Component({ component }) {
             components={{
               pre: (props) => {
                 if (props.children.props.playground !== undefined) {
-                  const { children, compiledCodeString } = props.children.props
+                  const { children, codeString, compiledCodeString } =
+                    props.children.props
                   return (
                     <Playground
                       code={children}
+                      codeString={codeString}
                       compiledCodeString={compiledCodeString}
                     />
                   )

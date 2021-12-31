@@ -4,9 +4,11 @@ import { compile } from 'xdm'
 import { Options } from 'xdm/lib/integration/esbuild'
 import xdm from 'xdm/esbuild.js'
 import * as esbuild from 'esbuild'
-import shiki from 'rehype-shiki'
-import { remarkExamplePlugin } from './remark-example-plugin'
+import * as shiki from 'shiki'
+// import { rehypeShiki } from './rehype-shiki'
+import rehypeShiki from 'rehype-shiki'
 import { rehypeMetaPlugin } from './rehype-meta-plugin'
+import { remarkExamplePlugin } from './remark-example-plugin'
 import { transformCode } from './transform-code.js'
 
 export async function getComponentReadme(componentDirectoryPath) {
@@ -30,7 +32,11 @@ async function transformReadme(componentReadmeContents, componentReadmePath) {
   const xdmOptions: Options = {
     providerImportSource: '@mdx-js/react',
     remarkPlugins: [[remarkExamplePlugin, { examples }]],
-    rehypePlugins: [rehypeMetaPlugin, [shiki, { theme: 'theme/code.json' }]],
+    rehypePlugins: [
+      rehypeMetaPlugin,
+      [rehypeShiki, { theme: 'theme/code.json' }],
+      // [rehypeShiki, { theme: '../../theme/code.json' }],
+    ],
   }
   if (containsImports) {
     // If there are imports we need to bundle with esbuild before transforming

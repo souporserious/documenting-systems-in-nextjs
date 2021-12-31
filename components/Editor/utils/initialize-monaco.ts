@@ -3,9 +3,9 @@ import { wireTmGrammars } from 'monaco-editor-textmate'
 import { Registry } from 'monaco-textmate'
 import { loadWASM } from 'onigasm'
 import type { AsyncReturnType } from 'type-fest'
+import theme from 'theme/code.json'
 import { allTypes } from '.data/types'
 
-import theme from '../theme.json'
 import defineTheme from './define-theme'
 
 export type Monaco = AsyncReturnType<typeof loader.init>
@@ -15,6 +15,8 @@ export type InitializeMonacoOptions = {
   monaco: Monaco
   defaultValue?: string
   id?: number
+  lineNumbers?: boolean
+  fontSize?: number
   onOpenEditor?: (input: any, source: any) => void
 }
 
@@ -23,6 +25,8 @@ export async function initializeMonaco({
   monaco,
   defaultValue = '',
   id = 0,
+  lineNumbers = true,
+  fontSize = 18,
   onOpenEditor = () => null,
 }: InitializeMonacoOptions) {
   // @ts-ignore
@@ -74,10 +78,13 @@ export async function initializeMonaco({
 
   const editor = monaco.editor.create(container, {
     model,
+    fontSize,
+    fontFamily: 'var(--font-family-mono)',
+    lineNumbers: lineNumbers ? 'on' : 'off',
+    automaticLayout: true,
     language: 'typescript',
     contextmenu: false,
     theme: 'vs-dark',
-    fontSize: 18,
     formatOnPaste: true,
     formatOnType: true,
     minimap: { enabled: false },

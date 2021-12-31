@@ -7,6 +7,8 @@
   --color-foreground-interactive: rgba(255, 255, 255, 0.9);
   --color-background: rgba(0, 0, 0, 1);
   --color-separator: rgba(255, 255, 255, 0.96);
+  --font-family-mono: 'SF Mono', Menlo, Consolas, 'Ubuntu Mono',
+    'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', monospace;
 }
 
 body,
@@ -25,8 +27,14 @@ ul {
 }
 
 pre {
-  padding: 1rem;
+  /* padding: 1rem; */
   border-radius: 0.5rem;
+}
+
+code {
+  font-size: 13px;
+  line-height: 20px;
+  font-family: var(--font-family-mono);
 }
 
 body {
