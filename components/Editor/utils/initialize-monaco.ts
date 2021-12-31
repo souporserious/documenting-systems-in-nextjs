@@ -106,7 +106,7 @@ export async function initializeMonaco({
     module: monaco.languages.typescript.ModuleKind.CommonJS,
     noEmit: true,
     esModuleInterop: true,
-    jsx: monaco.languages.typescript.JsxEmit.React,
+    jsx: monaco.languages.typescript.JsxEmit.Preserve,
     reactNamespace: 'React',
     allowJs: true,
     typeRoots: ['node_modules/@types'],
@@ -123,7 +123,7 @@ export async function initializeMonaco({
    * Load React types
    * alternatively, you can use: https://github.com/lukasbach/monaco-editor-auto-typings
    */
-  fetch('https://unpkg.com/@types/react@17.0.37/index.d.ts')
+  fetch('https://unpkg.com/@types/react@17.0.38/index.d.ts')
     .then((response) => response.text())
     .then((types) => {
       monaco.languages.typescript.typescriptDefaults.addExtraLib(
