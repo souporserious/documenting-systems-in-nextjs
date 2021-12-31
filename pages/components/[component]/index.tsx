@@ -49,9 +49,7 @@ export default function Component({ component }) {
                   <h4 style={{ fontWeight: 600, margin: 0 }}>{type.name}</h4>
                   <code>{type.type}</code>
                 </div>
-                {type.description && (
-                  <p style={{ margin: 0 }}>{type.description}</p>
-                )}
+                {type.comment && <p style={{ margin: 0 }}>{type.comment[0]}</p>}
               </div>
             ))}
           </div>

@@ -2,10 +2,17 @@ import * as React from 'react'
 import { useCompiledCode, useComponent } from 'hooks'
 
 export function Playground({
+  code,
   codeString,
   compiledCodeString,
 }: {
+  /** Children of the code element used to display highlighted code. */
+  code?: React.ReactNode
+
+  /** A code string compiled by the `useCompiledCode` hook and rendered as the preview. */
   codeString?: string
+
+  /** A compiled code string rendered as the preview. */
   compiledCodeString?: string
 }) {
   const localCompiledCodeString = useCompiledCode(
@@ -29,7 +36,7 @@ export function Playground({
           overflow: 'auto',
         }}
       >
-        <code>{codeString}</code>
+        <code>{code || codeString}</code>
       </pre>
       {Preview ? <Preview /> : null}
     </div>
