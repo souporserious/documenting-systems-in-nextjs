@@ -11,6 +11,7 @@ export function Editor({
   id,
   height,
   lineNumbers,
+  folding,
   fontSize,
   onChange,
 }: { height?: string | number } & Omit<MonacoOptions, 'containerRef'>) {
@@ -24,6 +25,7 @@ export function Editor({
     value,
     id,
     lineNumbers,
+    folding,
     fontSize,
     onChange,
   })

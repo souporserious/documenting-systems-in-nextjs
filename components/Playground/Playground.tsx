@@ -30,13 +30,14 @@ export function Playground({
       style={{
         display: 'grid',
         gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
-        borderRadius: 8,
         boxShadow: '0 0 0 1px #474f6e',
-        overflow: 'hidden',
+        // borderRadius: 8,
+        // overflow: 'hidden',
       }}
     >
       <Editor
         lineNumbers={false}
+        folding={false}
         fontSize={13}
         value={codeString}
         onChange={setValue}
@@ -45,6 +46,7 @@ export function Playground({
       <pre
         onClick={() => setValue(codeString)}
         style={{
+          paddingLeft: 12,
           borderRadius: 0,
           backgroundColor: '#101218',
           overflow: 'auto',

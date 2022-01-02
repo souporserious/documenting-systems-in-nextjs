@@ -1,7 +1,6 @@
 // modified from: https://github.com/suren-atoyan/monaco-react/blob/master/src/Editor/Editor.js
 import * as React from 'react'
 import loader from '@monaco-editor/loader'
-import { useRouter } from 'next/router'
 import { kebabCase } from 'case-anything'
 import { usePlaygroundElements, usePlaygroundPosition } from 'atoms'
 import { initializeMonaco } from '../utils/initialize-monaco'
@@ -12,6 +11,7 @@ export type MonacoOptions = {
   value?: string
   id?: number
   lineNumbers?: boolean
+  folding?: boolean
   fontSize?: number
   onChange?: (value: string) => void
 }
@@ -21,6 +21,7 @@ export function useMonaco({
   value,
   id,
   lineNumbers,
+  folding,
   fontSize,
   onChange,
 }: MonacoOptions) {
@@ -44,6 +45,7 @@ export function useMonaco({
           defaultValue: value,
           id,
           lineNumbers,
+          folding,
           fontSize,
           onOpenEditor: (input) => {
             const [base, filename] = input.resource.path

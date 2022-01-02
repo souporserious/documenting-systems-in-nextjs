@@ -1,106 +1,50 @@
+// Forked from: https://github.com/rsclarke/rehype-shiki
 import * as shiki from 'shiki'
-import { visit } from 'unist-util-visit'
-import { commonLangIds, commonLangAliases, otherLangIds } from 'shiki-languages'
+import { access, findAll, findIndexPath } from 'tree-visit'
 import hastToString from 'hast-util-to-string'
-import u from 'unist-builder'
 
-const languages = [...commonLangIds, ...commonLangAliases, ...otherLangIds]
-
-export function rehypeShiki(options) {
-  var settings = options || {}
-  var theme = settings.theme || 'nord'
-  var useBackground =
-    typeof settings.useBackground === 'undefined'
-      ? true
-      : Boolean(settings.useBackground)
-  var shikiTheme
-  var highlighter
-
-  try {
-    shikiTheme = shiki.getTheme(theme)
-  } catch (_) {
-    try {
-      shikiTheme = shiki.loadTheme(theme)
-    } catch (_) {
-      throw new Error('Unable to load theme: ' + theme)
-    }
-  }
-
-  return transformer
-
-  async function transformer(tree) {
-    highlighter = await shiki.getHighlighter({
-      theme: shikiTheme,
-      langs: languages,
-    })
-    visit(tree, 'element', visitor)
-  }
-
-  function visitor(node, index, parent) {
-    if (!parent || parent.tagName !== 'pre' || node.tagName !== 'code') {
-      return
-    }
-
-    if (useBackground) {
-      addStyle(parent, 'background: ' + shikiTheme.bg)
-    }
-
-    const lang = codeLanguage(node)
-
-    if (!lang) {
-      // Unknown language, fall back to a foreground colour
-      addStyle(node, 'color: ' + shikiTheme.settings.foreground)
-      return
-    }
-
-    const tokens = highlighter.codeToThemedTokens(hastToString(node), lang)
-    const tree = tokensToHast(tokens)
-
-    node.children = tree
-  }
-}
-
-function tokensToHast(lines) {
+function tokensToHast(lines: shiki.IThemedToken[][]) {
   let tree = []
 
   for (const line of lines) {
     if (line.length === 0) {
-      tree.push(u('text', '\n'))
+      tree.push({ type: 'text', value: '\n' })
     } else {
       for (const token of line) {
-        tree.push(
-          u(
-            'element',
-            {
-              tagName: 'span',
-              properties: { style: 'color: ' + token.color },
-            },
-            [u('text', token.content)]
-          )
-        )
+        let style = `color: ${token.color};`
+
+        if (token.fontStyle & shiki.FontStyle.Italic) {
+          style += ' font-style: italic;'
+        }
+        if (token.fontStyle & shiki.FontStyle.Bold) {
+          style += ' font-weight: bold;'
+        }
+        if (token.fontStyle & shiki.FontStyle.Underline) {
+          style += ' text-decoration: underline;'
+        }
+
+        tree.push({
+          type: 'element',
+          tagName: 'span',
+          properties: { style },
+          children: [{ type: 'text', value: token.content }],
+        })
       }
 
-      tree.push(u('text', '\n'))
+      tree.push({ type: 'text', value: '\n' })
     }
   }
 
-  // Remove the last \n
+  // Remove last newline
   tree.pop()
 
   return tree
 }
 
-function addStyle(node, style) {
-  var props = node.properties || {}
-  var styles = props.style || []
-  styles.push(style)
-  props.style = styles
-  node.properties = props
-}
-
-function codeLanguage(node) {
-  const className = node.properties.className || []
-  var value
+function getLanguage(node: any) {
+  const props = (node.properties || {}) as Record<string, string[]>
+  const className = props.className || []
+  let value: string
 
   for (const element of className) {
     value = element
@@ -111,4 +55,50 @@ function codeLanguage(node) {
   }
 
   return null
+}
+
+function highlightBlock(highlighter: shiki.Highlighter, node: any) {
+  const language = getLanguage(node)
+  if (language) {
+    const tokens = highlighter.codeToThemedTokens(hastToString(node), language)
+    node.children = tokensToHast(tokens)
+  }
+}
+
+async function getTheme(theme: string) {
+  return shiki.loadTheme(theme)
+}
+
+async function getHighlighter(theme: string) {
+  const loadedTheme = await getTheme(theme)
+  return shiki.getHighlighter({
+    theme: loadedTheme,
+    langs: [],
+  })
+}
+
+const getChildren = (node) => node.children || []
+
+export default function attacher({ theme }: { theme?: string } = {}) {
+  return async function transformer(tree) {
+    const highlighter = await getHighlighter(theme)
+    const languageCodeBlocks = findAll(tree, {
+      getChildren,
+      predicate: (node) => {
+        const indexPath = findIndexPath(tree, {
+          getChildren,
+          predicate: (nodeToCompare) => nodeToCompare === node,
+        })
+        const parentIndexPath = indexPath.slice(0, -1)
+        const parentNode = access(tree, parentIndexPath, { getChildren })
+        return node.type === 'element'
+          ? parentNode.tagName === 'pre' && node.tagName === 'code'
+          : false
+      },
+    })
+
+    languageCodeBlocks.forEach((node) => {
+      highlightBlock(highlighter, node)
+    })
+  }
 }

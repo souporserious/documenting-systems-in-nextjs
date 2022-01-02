@@ -16,6 +16,7 @@ export type InitializeMonacoOptions = {
   defaultValue?: string
   id?: number
   lineNumbers?: boolean
+  folding?: boolean
   fontSize?: number
   onOpenEditor?: (input: any, source: any) => void
 }
@@ -26,6 +27,7 @@ export async function initializeMonaco({
   defaultValue = '',
   id = 0,
   lineNumbers = true,
+  folding = true,
   fontSize = 18,
   onOpenEditor = () => null,
 }: InitializeMonacoOptions) {
@@ -41,22 +43,10 @@ export async function initializeMonaco({
   const registry = new Registry({
     getGrammarDefinition: async (scopeName) => {
       switch (scopeName) {
-        case 'source.js':
-          return {
-            format: 'json',
-            content: await (await fetch('/JavaScript.tmLanguage.json')).text(),
-          }
-        case 'source.ts':
-          return {
-            format: 'json',
-            content: await (await fetch('/TypeScript.tmLanguage.json')).text(),
-          }
         case 'source.tsx':
           return {
             format: 'json',
-            content: await (
-              await fetch('/TypeScriptReact.tmLanguage.json')
-            ).text(),
+            content: await (await fetch('/tsx.tmLanguage.json')).text(),
           }
         default:
           return null
@@ -66,8 +56,6 @@ export async function initializeMonaco({
 
   const grammars = new Map()
 
-  grammars.set('javascript', 'source.js')
-  grammars.set('typescript', 'source.ts')
   grammars.set('typescript', 'source.tsx')
 
   const model = monaco.editor.createModel(
@@ -81,6 +69,7 @@ export async function initializeMonaco({
     fontSize,
     fontFamily: 'var(--font-family-mono)',
     lineNumbers: lineNumbers ? 'on' : 'off',
+    folding: folding,
     automaticLayout: true,
     language: 'typescript',
     contextmenu: false,
@@ -102,26 +91,8 @@ export async function initializeMonaco({
     return result
   }
 
-  defineTheme(monaco, theme)
-
-  await wireTmGrammars(monaco, registry, grammars, editor)
-
   monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-    target: monaco.languages.typescript.ScriptTarget.Latest,
-    allowNonTsExtensions: true,
-    moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
-    module: monaco.languages.typescript.ModuleKind.CommonJS,
-    noEmit: true,
-    esModuleInterop: true,
     jsx: monaco.languages.typescript.JsxEmit.Preserve,
-    reactNamespace: 'React',
-    allowJs: true,
-    typeRoots: ['node_modules/@types'],
-  })
-
-  monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-    noSemanticValidation: false,
-    noSyntaxValidation: false,
   })
 
   editor.focus()
@@ -148,6 +119,13 @@ export async function initializeMonaco({
       typeDef.path
     )
   })
+
+  /**
+   * Convert VS Code theme to Monaco theme
+   */
+  defineTheme(monaco, theme)
+
+  await wireTmGrammars(monaco, registry, grammars, editor)
 
   return editor
 }

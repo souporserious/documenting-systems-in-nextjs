@@ -5,8 +5,8 @@ import { Options } from 'xdm/lib/integration/esbuild'
 import xdm from 'xdm/esbuild.js'
 import * as esbuild from 'esbuild'
 import * as shiki from 'shiki'
-// import { rehypeShiki } from './rehype-shiki'
-import rehypeShiki from 'rehype-shiki'
+import rehypeShiki from './rehype-shiki'
+// import rehypeShiki from 'rehype-shiki'
 import { rehypeMetaPlugin } from './rehype-meta-plugin'
 import { remarkExamplePlugin } from './remark-example-plugin'
 import { transformCode } from './transform-code.js'
@@ -34,8 +34,8 @@ async function transformReadme(componentReadmeContents, componentReadmePath) {
     remarkPlugins: [[remarkExamplePlugin, { examples }]],
     rehypePlugins: [
       rehypeMetaPlugin,
-      [rehypeShiki, { theme: 'theme/code.json' }],
-      // [rehypeShiki, { theme: '../../theme/code.json' }],
+      // [rehypeShiki, { theme: 'theme/code.json' }],
+      [rehypeShiki, { theme: '../../theme/code.json' }],
     ],
   }
   if (containsImports) {
