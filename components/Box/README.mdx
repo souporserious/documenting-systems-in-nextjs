@@ -1,5 +1,17 @@
 import Guidelines from './guidelines.mdx'
 
-This is a `Box` component
+`Box` is the base component that other components can be built from. It is responsible for converting style props into CSS rules.
+
+```tsx playground
+import { Box } from 'components'
+
+export default function Callout() {
+  return (
+    <Box padding={16} backgroundColor="primary">
+      Hello Box
+    </Box>
+  )
+}
+```
 
 <Guidelines />

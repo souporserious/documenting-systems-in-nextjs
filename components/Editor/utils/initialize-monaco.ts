@@ -93,6 +93,7 @@ export async function initializeMonaco({
 
   monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
     jsx: monaco.languages.typescript.JsxEmit.Preserve,
+    esModuleInterop: true,
   })
 
   editor.focus()

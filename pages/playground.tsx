@@ -36,8 +36,10 @@ export default function Playground() {
       id="index"
       style={{ display: 'grid', gridTemplateColumns: 'auto 1fr 1fr' }}
     >
-      <aside style={{ padding: 24 }}>
-        <nav>
+      <aside style={{ height: '100vh', padding: 24 }}>
+        <nav
+          style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+        >
           <Link href="/" passHref>
             <a style={{ display: 'flex', fontSize: 18, padding: 8 }}>👻</a>
           </Link>
@@ -49,6 +51,8 @@ export default function Playground() {
               listStyle: 'none',
               padding: 0,
               gap: 16,
+              flex: 1,
+              overflow: 'auto',
             }}
           >
             {allComponents

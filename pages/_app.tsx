@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useRemoteRefresh } from 'next-remote-refresh/hook'
+import { Spacer } from 'components'
 
 import { allComponents, allHooks } from '.data'
 
@@ -45,6 +46,7 @@ export default function App({ Component, pageProps }) {
       <Nav>
         <NavLink to="/">👻</NavLink>
         <NavLink to="/playground">Playground</NavLink>
+        <Spacer size="16px" />
         <li>
           <h3 style={{ padding: 8 }}>Components</h3>
         </li>
@@ -53,6 +55,7 @@ export default function App({ Component, pageProps }) {
             {name}
           </NavLink>
         ))}
+        <Spacer size="16px" />
         <li>
           <h3 style={{ padding: 8 }}>Hooks</h3>
         </li>
