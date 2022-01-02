@@ -14,6 +14,7 @@ export function Editor({
   folding,
   fontSize,
   onChange,
+  onMount,
 }: { height?: string | number } & Omit<MonacoOptions, 'containerRef'>) {
   const ref = React.useRef()
   const countOfLines = value
@@ -28,6 +29,7 @@ export function Editor({
     folding,
     fontSize,
     onChange,
+    onMount,
   })
 
   return (

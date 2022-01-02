@@ -1,6 +1,10 @@
 import * as React from 'react'
+import dynamic from 'next/dynamic'
 import { useCompiledCode, useComponent } from 'hooks'
-import { Editor } from 'components'
+
+const Editor = dynamic(async () => (await import('../Editor')).Editor, {
+  ssr: false,
+})
 
 export function Playground({
   code,
@@ -16,6 +20,7 @@ export function Playground({
   /** A compiled code string rendered as the preview. */
   compiledCodeString?: string
 }) {
+  const [isEditorMounted, setIsEditorMounted] = React.useState(false)
   const [value, setValue] = React.useState(null)
   const localCompiledCodeString = useCompiledCode(
     compiledCodeString ? value : codeString
@@ -35,25 +40,35 @@ export function Playground({
         // overflow: 'hidden',
       }}
     >
-      <Editor
-        lineNumbers={false}
-        folding={false}
-        fontSize={13}
-        value={codeString}
-        onChange={setValue}
-      />
-
-      <pre
-        onClick={() => setValue(codeString)}
-        style={{
-          paddingLeft: 12,
-          borderRadius: 0,
-          backgroundColor: '#101218',
-          overflow: 'auto',
-        }}
-      >
-        <code>{code || codeString}</code>
-      </pre>
+      <div style={{ display: 'grid' }}>
+        <div style={{ gridArea: '1 / 1' }}>
+          {value && (
+            <Editor
+              lineNumbers={false}
+              folding={false}
+              fontSize={13}
+              value={value}
+              onChange={setValue}
+              onMount={() => setIsEditorMounted(true)}
+            />
+          )}
+        </div>
+        {!isEditorMounted && (
+          <pre
+            onClick={() => setValue(codeString)}
+            style={{
+              gridArea: '1 / 1',
+              paddingLeft: 10,
+              borderRadius: 0,
+              backgroundColor: '#101218',
+              overflow: 'auto',
+              zIndex: 1,
+            }}
+          >
+            <code>{code || codeString}</code>
+          </pre>
+        )}
+      </div>
 
       {Preview ? <Preview /> : null}
     </div>

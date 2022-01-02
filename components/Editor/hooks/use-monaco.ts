@@ -14,6 +14,7 @@ export type MonacoOptions = {
   folding?: boolean
   fontSize?: number
   onChange?: (value: string) => void
+  onMount?: () => void
 }
 
 export function useMonaco({
@@ -24,6 +25,7 @@ export function useMonaco({
   folding,
   fontSize,
   onChange,
+  onMount,
 }: MonacoOptions) {
   const [isMounting, setIsMounting] = React.useState(true)
   const monacoRef = React.useRef<Monaco>(null)
@@ -62,6 +64,15 @@ export function useMonaco({
             }
           },
         })
+        if (onMount) {
+          /**
+           * Add delay to account for loading grammars
+           * TODO: look into basing on actual grammar loading time
+           */
+          setTimeout(() => {
+            onMount()
+          }, 300)
+        }
         setIsMounting(false)
       })
       .catch((error) => {

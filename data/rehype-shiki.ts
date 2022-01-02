@@ -35,9 +35,6 @@ function tokensToHast(lines: shiki.IThemedToken[][]) {
     }
   }
 
-  // Remove last newline
-  tree.pop()
-
   return tree
 }
 
