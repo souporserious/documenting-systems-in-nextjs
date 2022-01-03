@@ -14,6 +14,7 @@ export type MonacoOptions = {
   folding?: boolean
   fontSize?: number
   focusRange?: { column: number; lineNumber: number }
+  highlightPosition?: boolean
   onChange?: (value: string) => void
   onMount?: () => void
 }
@@ -26,6 +27,7 @@ export function useMonaco({
   folding,
   fontSize,
   focusRange,
+  highlightPosition,
   onChange,
   onMount,
 }: MonacoOptions) {
@@ -218,7 +220,7 @@ export function useMonaco({
   }, [value])
 
   React.useEffect(() => {
-    if (isMounting) return
+    if (isMounting || !highlightPosition) return
 
     const ranges = []
 
@@ -256,5 +258,5 @@ export function useMonaco({
       decorationsRef.current,
       ranges
     )
-  }, [position, instancePosition, isMounting])
+  }, [position, highlightPosition, instancePosition, isMounting])
 }

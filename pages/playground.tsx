@@ -107,6 +107,7 @@ export default function Playground() {
         height="100vh"
         value={code}
         onChange={(value) => setCode(value)}
+        highlightPosition
       />
       <Preview code={code} />
     </div>

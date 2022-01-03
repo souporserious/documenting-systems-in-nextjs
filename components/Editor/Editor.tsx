@@ -14,6 +14,7 @@ export function Editor({
   folding,
   fontSize,
   focusRange,
+  highlightPosition,
   onChange,
   onMount,
 }: { height?: string | number } & Omit<MonacoOptions, 'containerRef'>) {
@@ -30,6 +31,7 @@ export function Editor({
     folding,
     fontSize,
     focusRange,
+    highlightPosition,
     onChange,
     onMount,
   })
