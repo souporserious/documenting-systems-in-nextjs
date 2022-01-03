@@ -1,3 +1,4 @@
+import Head from 'next/head'
 import { Stack } from 'components'
 import { getEditorLink } from 'utils/get-editor-link'
 import { useComponent } from 'hooks/use-component'
@@ -19,24 +20,29 @@ function Example({
 
 export default function Hook({ hook }) {
   return (
-    <Stack gap={32}>
-      <code>import {`{ ${hook.name} }`} from 'hooks'</code>
-      <Stack gap={16}>
-        <h1>{hook.name}</h1>
-        <p>{hook.description}</p>
-        {hook.path && (
-          <a href={getEditorLink({ path: hook.path })}>View Source</a>
-        )}
-      </Stack>
-      <Stack gap={16}>
-        <h2>Examples</h2>
-        <Stack gap={8}>
-          {hook.examples.map((example, index) => (
-            <Example key={index} example={example} />
-          ))}
+    <>
+      <Head>
+        <title>Hooks / {hook.name}</title>
+      </Head>
+      <Stack gap={32}>
+        <code>import {`{ ${hook.name} }`} from 'hooks'</code>
+        <Stack gap={16}>
+          <h1>{hook.name}</h1>
+          <p>{hook.description}</p>
+          {hook.path && (
+            <a href={getEditorLink({ path: hook.path })}>View Source</a>
+          )}
+        </Stack>
+        <Stack gap={16}>
+          <h2>Examples</h2>
+          <Stack gap={8}>
+            {hook.examples.map((example, index) => (
+              <Example key={index} example={example} />
+            ))}
+          </Stack>
         </Stack>
       </Stack>
-    </Stack>
+    </>
   )
 }
 
