@@ -15,8 +15,8 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
+      "components": ["components/index.ts"],
       "hooks": ["hooks/index.ts"],
-      "system": ["components/index.ts"],
       "utils": ["utils/index.ts"],
       "theme": ["theme/*"]
     },

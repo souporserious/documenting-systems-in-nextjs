@@ -1,6 +1,7 @@
 import * as React from 'react'
 import dynamic from 'next/dynamic'
 import { useCompiledCode, useComponent } from 'hooks'
+import { Spinner } from 'components'
 
 const Editor = dynamic(async () => (await import('../Editor')).Editor, {
   ssr: false,
@@ -55,6 +56,7 @@ export function Playground({
             />
           )}
         </div>
+
         {!isEditorMounted && (
           <pre
             onClick={(event) => {
@@ -88,6 +90,23 @@ export function Playground({
           >
             <code>{code || codeString}</code>
           </pre>
+        )}
+
+        {value && !isEditorMounted && (
+          <div
+            style={{
+              gridArea: '1 / 1',
+              placeSelf: 'start end',
+              padding: 4,
+              zIndex: 2,
+            }}
+          >
+            <Spinner
+              size="sm"
+              primaryColor="rgba(255,255,255,0.75)"
+              secondaryColor="rgba(255,255,255,0.5)"
+            />
+          </div>
         )}
       </div>
 
