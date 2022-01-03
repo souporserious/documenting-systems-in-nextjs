@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import { colors } from 'theme'
 
 export type GridProps = {
   gridColumn?: string
@@ -24,7 +23,7 @@ export type GridProps = {
   gap?: number | string
   columnGap?: number | string
   rowGap?: number | string
-  background?: keyof typeof colors
+  background?: string
 }
 
 export const Grid = styled.div<GridProps>((props) => ({
