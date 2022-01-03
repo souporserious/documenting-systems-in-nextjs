@@ -33,6 +33,7 @@
     "color": "^4.1.0",
     "concurrently": "^6.5.1",
     "css-loader": "^6.5.1",
+    "dprint-node": "^1.0.5",
     "esbuild": "^0.14.10",
     "hast-util-to-string": "^1.0.4",
     "ink": "^3.2.0",

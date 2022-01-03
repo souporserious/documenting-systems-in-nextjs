@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Box, Text } from 'ink'
 import TextInput from 'ink-text-input'
+import dprint from 'dprint-node'
 import { project } from './project'
 import { Option, Select } from './components/Select'
 import { getTopLevelDirectories } from './utils/get-top-level-directories'
@@ -41,21 +42,66 @@ function NewFile() {
                 `export * from './${value}'`
               )
 
-              /** Create the initial file for export based on the type. */
+              /** Create initial file for exports based on the value. */
               project
                 .createSourceFile(`${directory}/${value}/${value}.tsx`)
                 .addFunction({
                   name: value,
                   isExported: true,
                 })
+                .setBodyText(`return <div>Hello ${value}</div>`)
 
-              /** Lastly, create a README with some initial content. */
+              /** Create a README with some initial content. */
               project.createSourceFile(
                 `${directory}/${value}/README.mdx`,
-                `# ${value}`
+                `Hello ${value}`
               )
 
+              /** Update the local index.ts file to a barrel export and sort */
+              const indexSourceFile = project.getSourceFile(
+                `${directory}/index.ts`
+              )
+
+              indexSourceFile
+                .addExportDeclaration({
+                  moduleSpecifier: `./${value}`,
+                  namedExports: [value],
+                })
+                .toNamespaceExport()
+
+              /** Lastly, sort export declarations alphabetically. */
+              const exportDeclarations = indexSourceFile.getExportDeclarations()
+              const sortedDeclarations = exportDeclarations
+                .map((declaration) =>
+                  declaration.getModuleSpecifier().getLiteralValue()
+                )
+                .sort()
+
+              exportDeclarations.forEach((declaration) => {
+                const sortedIndex = sortedDeclarations.findIndex(
+                  (moduleFilePath) => {
+                    return (
+                      moduleFilePath ===
+                      declaration.getModuleSpecifier().getLiteralValue()
+                    )
+                  }
+                )
+                declaration.setOrder(sortedIndex)
+              })
+
               project.save()
+
+              /** Format the file now that we've saved our transformations. */
+              const formattedSourceFile = dprint.format(
+                indexSourceFile.getFilePath(),
+                indexSourceFile.getFullText(),
+                {
+                  quoteStyle: 'alwaysSingle',
+                  semiColons: 'asi',
+                }
+              )
+
+              indexSourceFile.replaceWithText(formattedSourceFile)
 
               setMessage(`Created ${value} in ${directory} successfully!`)
             } catch {
