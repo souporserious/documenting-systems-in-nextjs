@@ -9,13 +9,13 @@ const rotateCentered = keyframes({
 })
 
 export const spinnerSizes = {
-  sm: '16px',
+  sm: '12px',
   md: '32px',
   lg: '64px',
 } as const
 
 export const spinnerSizeThickness = {
-  sm: '3px',
+  sm: '2px',
   md: '4px',
   lg: '8px',
 } as const
@@ -43,15 +43,15 @@ export type SpinnerProps = {
 }
 
 export const Spinner = styled.div<SpinnerProps>(
-  (props) => ({
-    width: spinnerSizes[props.size || 'md'],
-    height: spinnerSizes[props.size || 'md'],
-    border: `${spinnerSizeThickness[props.size]} solid ${props.secondaryColor}`,
-    borderTopColor: props.primaryColor,
+  ({ primaryColor, secondaryColor, size = 'md' }) => ({
+    width: spinnerSizes[size],
+    height: spinnerSizes[size],
+    border: `${spinnerSizeThickness[size]} solid ${secondaryColor}`,
+    borderTopColor: primaryColor,
     borderRadius: '100%',
   }),
-  (props) =>
-    props.center
+  ({ center }) =>
+    center
       ? css`
           position: absolute;
           top: 50%;
