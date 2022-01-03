@@ -96,8 +96,6 @@ export async function initializeMonaco({
     esModuleInterop: true,
   })
 
-  editor.focus()
-
   /**
    * Load React types
    * alternatively, you can use: https://github.com/lukasbach/monaco-editor-auto-typings

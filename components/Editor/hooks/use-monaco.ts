@@ -13,6 +13,7 @@ export type MonacoOptions = {
   lineNumbers?: boolean
   folding?: boolean
   fontSize?: number
+  focusRange?: { column: number; lineNumber: number }
   onChange?: (value: string) => void
   onMount?: () => void
 }
@@ -24,6 +25,7 @@ export function useMonaco({
   lineNumbers,
   folding,
   fontSize,
+  focusRange,
   onChange,
   onMount,
 }: MonacoOptions) {
@@ -90,6 +92,17 @@ export function useMonaco({
       }
     }
   }, [])
+
+  /** Focus the editor on mount. */
+  React.useEffect(() => {
+    if (isMounting) return
+
+    editorRef.current.focus()
+
+    if (focusRange) {
+      editorRef.current.setPosition(focusRange)
+    }
+  }, [isMounting])
 
   React.useEffect(() => {
     if (isMounting) return
