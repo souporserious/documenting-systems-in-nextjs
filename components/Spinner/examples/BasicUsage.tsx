@@ -7,8 +7,8 @@ export default function BasicUsage() {
         <Spinner
           key={size}
           size={size}
-          trackColor="rgba(255,255,255,0.5)"
-          color="rgba(255,255,255,0.75)"
+          primaryColor="rgba(255,255,255,0.75)"
+          secondaryColor="rgba(255,255,255,0.5)"
         />
       ))}
     </Stack>

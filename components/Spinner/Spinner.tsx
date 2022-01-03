@@ -24,12 +24,12 @@ export type SpinnerProps = {
   /**
    * Primary color of spinner.
    */
-  color?: string
+  primaryColor?: string
 
   /**
    * Secondary color of spinner.
    */
-  trackColor?: string
+  secondaryColor?: string
 
   /**
    * Size of spinner.
@@ -46,8 +46,8 @@ export const Spinner = styled.div<SpinnerProps>(
   (props) => ({
     width: spinnerSizes[props.size || 'md'],
     height: spinnerSizes[props.size || 'md'],
-    border: `${spinnerSizeThickness[props.size]} solid ${props.trackColor}`,
-    borderTopColor: props.color,
+    border: `${spinnerSizeThickness[props.size]} solid ${props.secondaryColor}`,
+    borderTopColor: props.primaryColor,
     borderRadius: '100%',
   }),
   (props) =>
