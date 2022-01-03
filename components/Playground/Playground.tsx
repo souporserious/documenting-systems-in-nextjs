@@ -64,7 +64,14 @@ export function Playground({
               const paddingOffsetLeft = 10
               const x = event.clientX - rect.left - paddingOffsetLeft
               const y = event.clientY - rect.top
-              const column = Math.max(0, Math.ceil(x / charWidth))
+              const columnPosition = x / charWidth
+              const column =
+                Math.max(
+                  0,
+                  columnPosition % Math.floor(columnPosition) > 0.5
+                    ? Math.ceil(columnPosition)
+                    : Math.floor(columnPosition)
+                ) + 1
               const lineNumber = Math.max(0, Math.ceil(y / lineHeight))
               setFocusRange({ column, lineNumber })
               setValue(codeString)
