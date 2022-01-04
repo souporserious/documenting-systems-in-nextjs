@@ -1,14 +1,13 @@
+import { kebabCase } from 'case-anything'
 import { promises as fs } from 'fs'
 import * as path from 'path'
-import { kebabCase } from 'case-anything'
-import { transformCode } from './transform-code.js'
-
-const componentsDirectory = path.resolve(process.cwd(), 'components')
+import { componentsSourceFile } from './project'
+import { transformCode } from './transform-code'
 
 export async function getComponentExamples() {
-  const components = (await fs.readdir(componentsDirectory)).filter(
-    (file) => !file.startsWith('index')
-  )
+  const components = (
+    await fs.readdir(componentsSourceFile.getDirectoryPath())
+  ).filter((file) => !file.startsWith('index'))
   const examples = await Promise.all(
     components.map(async (componentFileName) => {
       const component = kebabCase(componentFileName)

@@ -1,13 +1,13 @@
+import * as esbuild from 'esbuild'
 import { promises as fs } from 'fs'
+import { resolve } from 'path'
+import matter from 'gray-matter'
 import { StringDecoder } from 'string_decoder'
 import { compile } from 'xdm'
-import { Options } from 'xdm/lib/integration/esbuild'
 import xdm from 'xdm/esbuild.js'
-import * as esbuild from 'esbuild'
-import * as shiki from 'shiki'
-import rehypeShiki from './rehype-shiki'
-// import rehypeShiki from 'rehype-shiki'
+import type { Options } from 'xdm/lib/integration/esbuild'
 import { rehypeMetaPlugin } from './rehype-meta-plugin'
+import { rehypeShikiPlugin } from './rehype-shiki-plugin'
 import { remarkExamplePlugin } from './remark-example-plugin'
 import { transformCode } from './transform-code.js'
 
@@ -18,7 +18,11 @@ export async function getComponentReadme(componentDirectoryPath) {
       componentReadmePath,
       'utf-8'
     )
-    return transformReadme(componentReadmeContents, componentReadmePath)
+    const result = matter(componentReadmeContents)
+    return {
+      data: result.data,
+      code: await transformReadme(result.content, componentReadmePath),
+    }
   } catch {
     return null
   }
@@ -34,8 +38,7 @@ async function transformReadme(componentReadmeContents, componentReadmePath) {
     remarkPlugins: [[remarkExamplePlugin, { examples }]],
     rehypePlugins: [
       rehypeMetaPlugin,
-      // [rehypeShiki, { theme: 'theme/code.json' }],
-      [rehypeShiki, { theme: '../../theme/code.json' }],
+      [rehypeShikiPlugin, { theme: resolve(process.cwd(), 'theme/code.json') }],
     ],
   }
   if (containsImports) {
@@ -53,9 +56,8 @@ async function transformReadme(componentReadmeContents, componentReadmePath) {
       Buffer.from(result.outputFiles[0].contents)
     )
     return transformCode(bundledReadme)
-  } else {
-    // Otherwise we can simply just compile it with xdm
-    const compiledReadme = await compile(componentReadmeContents, xdmOptions)
-    return transformCode(compiledReadme.value)
   }
+  // Otherwise we can simply just compile it with xdm
+  const compiledReadme = await compile(componentReadmeContents, xdmOptions)
+  return transformCode(compiledReadme.value)
 }

@@ -22,7 +22,7 @@ export async function getComponents() {
           path: null,
           name,
           slug: componentSlug,
-          readme: componentReadme,
+          readme: componentReadme?.code,
           props: getComponentTypes(reactFunctionDeclaration),
           examples: allComponentExamples.filter(
             (example) => example.componentSlug === componentSlug

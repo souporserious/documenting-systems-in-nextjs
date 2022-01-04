@@ -76,7 +76,7 @@ async function getHighlighter(theme: string) {
 
 const getChildren = (node) => node.children || []
 
-export default function attacher({ theme }: { theme?: string } = {}) {
+export function rehypeShikiPlugin({ theme }: { theme?: string } = {}) {
   return async function transformer(tree) {
     const highlighter = await getHighlighter(theme)
     const languageCodeBlocks = findAll(tree, {

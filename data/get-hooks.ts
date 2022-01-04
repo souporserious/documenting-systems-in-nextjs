@@ -5,12 +5,11 @@ import { Node } from 'ts-morph'
 import { transformCode } from './transform-code'
 import { hooksSourceFile } from './project'
 
-const hooksDirectory = path.resolve(process.cwd(), 'hooks')
-const hooks = readdirSync(hooksDirectory).filter(
-  (file) => !file.startsWith('index')
-)
-
 export async function getHooks() {
+  const hooksDirectory = hooksSourceFile.getDirectoryPath()
+  const hooks = readdirSync(hooksDirectory).filter(
+    (file) => !file.startsWith('index')
+  )
   let docs = {}
 
   hooksSourceFile.getExportedDeclarations().forEach(([declaration]) => {
