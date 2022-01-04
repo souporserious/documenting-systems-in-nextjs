@@ -49,6 +49,7 @@ async function transformReadme(componentReadmeContents, componentReadmePath) {
       format: 'esm',
       bundle: true,
       write: false,
+      minify: process.env.NODE_ENV === 'production',
       plugins: [xdm(xdmOptions)],
       external: ['react', 'react-dom', '@mdx-js/react'],
     })
