@@ -72,10 +72,7 @@ export function remarkExamplePlugin({ examples }) {
             filename,
           })
         } catch (error) {
-          console.log(
-            `Error parsing example source: Make sure example exists.`,
-            error
-          )
+          console.log(`Error parsing example source at ${examplePath}:`, error)
         }
       }
     })

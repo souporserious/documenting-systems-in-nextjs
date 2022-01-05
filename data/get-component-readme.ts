@@ -1,6 +1,6 @@
 import * as esbuild from 'esbuild'
 import { promises as fs } from 'fs'
-import { resolve } from 'path'
+import { dirname, resolve } from 'path'
 import matter from 'gray-matter'
 import { StringDecoder } from 'string_decoder'
 import { compile } from 'xdm'
@@ -13,18 +13,25 @@ import { transformCode } from './transform-code.js'
 
 export async function getComponentReadme(componentDirectoryPath) {
   const componentReadmePath = `${componentDirectoryPath}/README.mdx`
+  let componentReadmeContents = null
+
   try {
-    const componentReadmeContents = await fs.readFile(
-      componentReadmePath,
-      'utf-8'
-    )
+    componentReadmeContents = await fs.readFile(componentReadmePath, 'utf-8')
+  } catch (error) {
+    // Bail if README.mdx not found since it isn't required
+    return null
+  }
+
+  try {
     const result = matter(componentReadmeContents)
     return {
       data: result.data,
       code: await transformReadme(result.content, componentReadmePath),
     }
-  } catch {
-    return null
+  } catch (error) {
+    throw Error(
+      `Error parsing README.mdx at "${componentReadmePath}": ${error}`
+    )
   }
 }
 
@@ -45,6 +52,7 @@ async function transformReadme(componentReadmeContents, componentReadmePath) {
     // If there are imports we need to bundle with esbuild before transforming
     const result = await esbuild.build({
       entryPoints: [componentReadmePath],
+      absWorkingDir: dirname(componentReadmePath),
       target: 'esnext',
       format: 'esm',
       bundle: true,
@@ -59,6 +67,9 @@ async function transformReadme(componentReadmeContents, componentReadmePath) {
     return transformCode(bundledReadme)
   }
   // Otherwise we can simply just compile it with xdm
-  const compiledReadme = await compile(componentReadmeContents, xdmOptions)
+  const compiledReadme = await compile(
+    { path: componentReadmePath, value: componentReadmeContents },
+    xdmOptions
+  )
   return transformCode(compiledReadme.value)
 }
