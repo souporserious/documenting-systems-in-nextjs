@@ -1,41 +1,55 @@
 import { kebabCase } from 'case-anything'
-import type { CallExpression } from 'ts-morph'
+import type { CallExpression, Directory } from 'ts-morph'
 import { Node } from 'ts-morph'
-import { getComponentExamples } from './get-component-examples'
-import { getComponentReadme } from './get-component-readme'
+import { getExamples } from './get-examples'
+import { getReadme } from './get-readme'
 import { getComponentTypes } from './get-component-types'
 import { componentsSourceFile } from './project'
 
 export async function getComponents() {
-  const exportedDeclarations = componentsSourceFile.getExportedDeclarations()
-  const allComponentExamples = await getComponentExamples()
-  const allComponents = await Promise.all(
-    Array.from(exportedDeclarations).map(async ([name, [declaration]]) => {
-      const reactFunctionDeclaration = getReactFunctionDeclaration(declaration)
-      if (reactFunctionDeclaration) {
-        const componentSourceFile = reactFunctionDeclaration.getSourceFile()
-        const componentReadme = await getComponentReadme(
-          componentSourceFile.getDirectoryPath()
-        )
-        const componentSlug = kebabCase(name)
-        const componentData = {
-          path: null,
-          name,
-          slug: componentSlug,
-          readme: componentReadme?.code,
-          props: getComponentTypes(reactFunctionDeclaration),
-          examples: allComponentExamples.filter(
-            (example) => example.componentSlug === componentSlug
-          ),
-        }
-        if (process.env.NODE_ENV === 'development') {
-          componentData.path = declaration.getSourceFile().getFilePath()
-        }
-        return componentData
-      }
-    })
-  )
-  return allComponents.filter(Boolean)
+  const sourceDirectories = componentsSourceFile.getDirectory().getDirectories()
+  const sourceDocs = await Promise.all(sourceDirectories.map(getDirectoryDocs))
+  return sourceDocs
+}
+
+function getDocs(directory: Directory) {
+  const exportedDeclarations = directory
+    .getSourceFile('index.ts')
+    .getExportedDeclarations()
+  const docs = Array.from(exportedDeclarations)
+    .map(([name, [declaration]]) => getReactDocs(name, declaration))
+    .filter(Boolean)
+  return docs
+}
+
+function getReactDocs(name, declaration) {
+  const reactFunctionDeclaration = getReactFunctionDeclaration(declaration)
+  if (reactFunctionDeclaration) {
+    return {
+      name,
+      slug: kebabCase(name),
+      props: getComponentTypes(reactFunctionDeclaration),
+      path:
+        process.env.NODE_ENV === 'development'
+          ? declaration.getSourceFile().getFilePath()
+          : null,
+    }
+  }
+}
+
+async function getDirectoryDocs(directory: Directory) {
+  const name = directory.getBaseName()
+  const readme = await getReadme(directory.getPath())
+  const examples = await getExamples(directory)
+  const docs = getDocs(directory)
+  return {
+    name,
+    readme,
+    docs,
+    examples,
+    slug: kebabCase(name),
+    path: process.env.NODE_ENV === 'development' ? directory.getPath() : null,
+  }
 }
 
 export function isComponent(name) {

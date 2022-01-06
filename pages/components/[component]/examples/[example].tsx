@@ -29,7 +29,7 @@ export async function getStaticPaths() {
   return {
     paths: allExamples.map((example) => ({
       params: {
-        component: example.componentSlug,
+        component: example.parentSlug,
         example: example.slug,
       },
     })),
@@ -44,7 +44,7 @@ export async function getStaticProps(query) {
       component: query.params.component,
       example: allExamples.find(
         (example) =>
-          example.componentSlug === query.params.component &&
+          example.parentSlug === query.params.component &&
           example.slug === query.params.example
       ),
     },

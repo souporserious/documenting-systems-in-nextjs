@@ -68,7 +68,7 @@ export default function Playground() {
                 >
                   <h3 style={{ fontSize: 14, margin: 0 }}>{name}</h3>
                   <ul style={{ listStyle: 'none', padding: 0 }}>
-                    {examples.map(({ name, code, slug, componentSlug }) => (
+                    {examples.map(({ name, code, slug, parentSlug }) => (
                       <li
                         key={name}
                         style={{
@@ -83,7 +83,7 @@ export default function Playground() {
                         >
                           <iframe
                             title={name}
-                            src={`components/${componentSlug}/examples/${slug}`}
+                            src={`components/${parentSlug}/examples/${slug}`}
                             style={{
                               pointerEvents: 'none',
                               width: 600,

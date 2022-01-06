@@ -20,6 +20,9 @@ export type ButtonProps = {
   style?: React.CSSProperties
 }
 
+/**
+ * Button allows users to take specific actions.
+ */
 export function Button({
   variant,
   backgroundColor: propsBackgroundColor,

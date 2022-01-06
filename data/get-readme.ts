@@ -11,35 +11,31 @@ import { rehypeShikiPlugin } from './rehype-shiki-plugin'
 import { remarkExamplePlugin } from './remark-example-plugin'
 import { transformCode } from './transform-code.js'
 
-export async function getComponentReadme(componentDirectoryPath) {
-  const componentReadmePath = `${componentDirectoryPath}/README.mdx`
-  let componentReadmeContents = null
+export async function getReadme(directoryPath) {
+  const readmePath = `${directoryPath}/README.mdx`
+  let readmeContents = null
 
   try {
-    componentReadmeContents = await fs.readFile(componentReadmePath, 'utf-8')
+    readmeContents = await fs.readFile(readmePath, 'utf-8')
   } catch (error) {
     // Bail if README.mdx not found since it isn't required
     return null
   }
 
   try {
-    const result = matter(componentReadmeContents)
+    const result = matter(readmeContents)
     return {
       data: result.data,
-      code: await transformReadme(result.content, componentReadmePath),
+      code: await transformReadme(result.content, readmePath),
     }
   } catch (error) {
-    throw Error(
-      `Error parsing README.mdx at "${componentReadmePath}": ${error}`
-    )
+    throw Error(`Error parsing README.mdx at "${readmePath}": ${error}`)
   }
 }
 
-async function transformReadme(componentReadmeContents, componentReadmePath) {
+async function transformReadme(readmeContents, readmePath) {
   const examples = []
-  const containsImports = /import [^}]*.*(?=from).*/.test(
-    componentReadmeContents
-  )
+  const containsImports = /import [^}]*.*(?=from).*/.test(readmeContents)
   const xdmOptions: Options = {
     providerImportSource: '@mdx-js/react',
     remarkPlugins: [[remarkExamplePlugin, { examples }]],
@@ -51,8 +47,8 @@ async function transformReadme(componentReadmeContents, componentReadmePath) {
   if (containsImports) {
     // If there are imports we need to bundle with esbuild before transforming
     const result = await esbuild.build({
-      entryPoints: [componentReadmePath],
-      absWorkingDir: dirname(componentReadmePath),
+      entryPoints: [readmePath],
+      absWorkingDir: dirname(readmePath),
       target: 'esnext',
       format: 'esm',
       bundle: true,
@@ -68,7 +64,7 @@ async function transformReadme(componentReadmeContents, componentReadmePath) {
   }
   // Otherwise we can simply just compile it with xdm
   const compiledReadme = await compile(
-    { path: componentReadmePath, value: componentReadmeContents },
+    { path: readmePath, value: readmeContents },
     xdmOptions
   )
   return transformCode(compiledReadme.value)

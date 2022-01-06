@@ -1,13 +1,15 @@
+import * as React from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { MDXProvider } from '@mdx-js/react'
+import * as components from 'components'
 import { Playground } from 'components'
 import { useComponent } from 'hooks'
 import { getEditorLink } from 'utils'
 import { allComponents } from '.data'
 
 export default function Component({ component }) {
-  const Readme = useComponent(component.readme)
+  const Readme = useComponent(component.readme.code)
   return (
     <>
       <Head>
@@ -23,6 +25,11 @@ export default function Component({ component }) {
           {component.readme && (
             <MDXProvider
               components={{
+                ...Object.fromEntries(
+                  Object.entries(components).filter(([name]) =>
+                    /[A-Z]/.test(name.charAt(0))
+                  )
+                ),
                 pre: (props) => {
                   if (props.children.props.playground !== undefined) {
                     const { children, codeString, compiledCodeString } =
@@ -43,22 +50,35 @@ export default function Component({ component }) {
             </MDXProvider>
           )}
         </div>
-        {component.props && (
+        {component.docs.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <h2>Props</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {component.props.map((type) => (
+              {component.docs.map((doc) => (
                 <div
-                  key={type.name}
-                  style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+                  style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
                 >
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <h4 style={{ fontWeight: 600, margin: 0 }}>{type.name}</h4>
-                    <code>{type.type}</code>
-                  </div>
-                  {type.comment && (
-                    <p style={{ margin: 0 }}>{type.comment[0]}</p>
-                  )}
+                  <h3>{doc.name}</h3>
+                  {doc.props.map((type) => (
+                    <div
+                      key={type.name}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 8,
+                      }}
+                    >
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <h4 style={{ fontWeight: 600, margin: 0 }}>
+                          {type.name}
+                        </h4>
+                        <code>{type.type}</code>
+                      </div>
+                      {type.comment && (
+                        <p style={{ margin: 0 }}>{type.comment[0]}</p>
+                      )}
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>
