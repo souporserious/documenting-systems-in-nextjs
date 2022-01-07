@@ -5,7 +5,7 @@ export function getComponentTypes(declaration: Node) {
   const signatures = declaration.getType().getCallSignatures()
 
   if (signatures.length === 0) {
-    return null
+    return []
   }
 
   const [propsSignature] = signatures
@@ -47,5 +47,6 @@ export function getComponentTypes(declaration: Node) {
       })
       .filter(Boolean)
   }
-  return null
+
+  return []
 }
