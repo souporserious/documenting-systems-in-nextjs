@@ -12,6 +12,25 @@ export async function getComponents() {
   return sourceDocs
 }
 
+async function getDirectoryDocs(directory: Directory) {
+  const path = directory.getPath()
+  const name = directory.getBaseName()
+  const readme = await getReadme(directory.getPath())
+  const examples = await getExamples(directory)
+  const docs = getDocs(directory)
+  return {
+    name,
+    readme,
+    docs,
+    examples,
+    slug: kebabCase(name),
+    path:
+      process.env.NODE_ENV === 'development'
+        ? path + '/index.ts'
+        : path.replace(process.cwd(), ''),
+  }
+}
+
 function getDocs(directory: Directory) {
   const exportedDeclarations = directory
     .getSourceFile('index.ts')
@@ -35,25 +54,6 @@ function getReactDocs(name, declaration) {
           ? path
           : path.replace(process.cwd(), ''),
     }
-  }
-}
-
-async function getDirectoryDocs(directory: Directory) {
-  const path = directory.getPath()
-  const name = directory.getBaseName()
-  const readme = await getReadme(directory.getPath())
-  const examples = await getExamples(directory)
-  const docs = getDocs(directory)
-  return {
-    name,
-    readme,
-    docs,
-    examples,
-    slug: kebabCase(name),
-    path:
-      process.env.NODE_ENV === 'development'
-        ? path
-        : path.replace(process.cwd(), ''),
   }
 }
 

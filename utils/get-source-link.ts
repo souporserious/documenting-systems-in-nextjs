@@ -5,7 +5,6 @@ import { getEditorLink } from './get-editor-link'
  * link in production.
  */
 export function getSourceLink({ path }) {
-  console.log(path)
   if (process.env.NODE_ENV === 'development') {
     return getEditorLink({ path })
   }
