@@ -1,22 +1,28 @@
-# Documenting Design Systems In NextJS
+# Documenting Systems In NextJS
 
-This repo is an example of how to document a system in NextJS.
+This repo is an example of how to document a system of components, hooks, utilities, and themes in [NextJS](https://nextjs.org/) using [TS Morph](https://ts-morph.com/).
 
 ## Features
 
 ♻️ Fast Refresh for everything
 
+📝 MDX for mixing Markdown and JSX
+
 🤖 Component, hook, and utility doc generation
+
+🎨 Theme and design token doc generation (Not implemented)
 
 🖼 Server rendered live code examples
 
-🕹 Interactive playground using Monaco Editor
+🕹 Playground powered by Monaco Editor with Go to Definition
 
-🐇 Quick links to source code
+🐇 Quick links to source code in development and production
 
-📝 MDX for mixing Markdown and JSX
+🌈 CLI for easily adding new features
 
-🔀 Relationships between components, hooks, and utilities
+🔀 Theme, component, hook, and utility relationships (Not implemented)
+
+📸 Screenshot diffing (Not implemented)
 
 ## Development
 
