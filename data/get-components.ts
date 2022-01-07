@@ -25,19 +25,21 @@ function getDocs(directory: Directory) {
 function getReactDocs(name, declaration) {
   const reactFunctionDeclaration = getReactFunctionDeclaration(declaration)
   if (reactFunctionDeclaration) {
+    const path = declaration.getSourceFile().getFilePath()
     return {
       name,
       slug: kebabCase(name),
       props: getComponentTypes(reactFunctionDeclaration),
       path:
         process.env.NODE_ENV === 'development'
-          ? declaration.getSourceFile().getFilePath()
-          : null,
+          ? path
+          : path.replace(process.cwd(), ''),
     }
   }
 }
 
 async function getDirectoryDocs(directory: Directory) {
+  const path = directory.getPath()
   const name = directory.getBaseName()
   const readme = await getReadme(directory.getPath())
   const examples = await getExamples(directory)
@@ -48,7 +50,10 @@ async function getDirectoryDocs(directory: Directory) {
     docs,
     examples,
     slug: kebabCase(name),
-    path: process.env.NODE_ENV === 'development' ? directory.getPath() : null,
+    path:
+      process.env.NODE_ENV === 'development'
+        ? path
+        : path.replace(process.cwd(), ''),
   }
 }
 

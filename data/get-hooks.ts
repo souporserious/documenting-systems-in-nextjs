@@ -51,19 +51,16 @@ export async function getHooks() {
         hookExamples = null
       }
 
-      const hookData = {
+      return {
         name: camelCase(name),
         slug: name,
-        path: null,
         description: doc.description,
         examples: hookExamples,
+        path:
+          process.env.NODE_ENV === 'development'
+            ? hookPath
+            : hookPath.replace(process.cwd(), ''),
       }
-
-      if (process.env.NODE_ENV === 'development') {
-        hookData.path = hookPath
-      }
-
-      return hookData
     })
   )
 }

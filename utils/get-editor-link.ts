@@ -1,13 +1,23 @@
-// modified from: https://github.com/siddharthkp/babel-plugin-open-source
+/**
+ * Opens the source file in the respective IDE.
+ * Forked from: https://github.com/siddharthkp/babel-plugin-open-source
+ */
 export function getEditorLink({
   path,
   line = 0,
   column = 0,
   editor = 'vscode',
 }: {
+  /** Path of the file to be opened. */
   path: string
+
+  /** Line to be focused. */
   line?: number
+
+  /** Column to be focused. */
   column?: number
+
+  /** The IDE the file should be opened in. */
   editor?: 'sublime' | 'phpstorm' | 'atom' | 'vscode-insiders' | 'vscode'
 }) {
   switch (editor) {

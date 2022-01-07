@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import * as React from 'react'
 import { useComponent } from 'hooks'
-import { getEditorLink } from 'utils/get-editor-link'
+import { getSourceLink } from 'utils'
 import { pascalCase } from 'case-anything'
 import { allComponents } from '.data/components'
 
@@ -16,7 +16,7 @@ export default function Example({ component, example }) {
       </Head>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
         {example.path && (
-          <a href={getEditorLink({ path: example.path })}>View Source</a>
+          <a href={getSourceLink({ path: example.path })}>View Source</a>
         )}
       </div>
       <Component />

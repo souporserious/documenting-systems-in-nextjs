@@ -5,7 +5,7 @@ import { MDXProvider } from '@mdx-js/react'
 import * as components from 'components'
 import { Playground } from 'components'
 import { useComponent } from 'hooks'
-import { getEditorLink } from 'utils'
+import { getSourceLink } from 'utils'
 import { allComponents } from '.data'
 
 export default function Component({ component }) {
@@ -16,10 +16,10 @@ export default function Component({ component }) {
         <title>Components / {component.name}</title>
       </Head>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-        <code>import {`{ ${component.name} }`} from 'components'</code>
         {component.path && (
-          <a href={getEditorLink({ path: component.path })}>View Source</a>
+          <a href={getSourceLink({ path: component.path })}>View Source</a>
         )}
+        <code>import {`{ ${component.name} }`} from 'components'</code>
         <h1>{component.name}</h1>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {component.readme && (
@@ -60,6 +60,9 @@ export default function Component({ component }) {
                   style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
                 >
                   <h3>{doc.name}</h3>
+                  {doc.path && (
+                    <a href={getSourceLink({ path: doc.path })}>View Source</a>
+                  )}
                   {doc.props.map((type) => (
                     <div
                       key={type.name}

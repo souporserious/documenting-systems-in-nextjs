@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { Stack } from 'components'
-import { getEditorLink } from 'utils/get-editor-link'
-import { useComponent } from 'hooks/use-component'
+import { getSourceLink } from 'utils'
+import { useComponent } from 'hooks'
 import { allHooks } from '.data/hooks'
 
 function Example({
@@ -30,7 +30,7 @@ export default function Hook({ hook }) {
           <h1>{hook.name}</h1>
           <p>{hook.description}</p>
           {hook.path && (
-            <a href={getEditorLink({ path: hook.path })}>View Source</a>
+            <a href={getSourceLink({ path: hook.path })}>View Source</a>
           )}
         </Stack>
         <Stack gap={16}>
