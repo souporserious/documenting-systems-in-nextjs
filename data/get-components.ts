@@ -15,7 +15,7 @@ export async function getComponents() {
 async function getDirectoryDocs(directory: Directory) {
   const path = directory.getPath()
   const name = directory.getBaseName()
-  const readme = await getReadme(directory.getPath())
+  const readme = await getReadme(path)
   const examples = await getExamples(directory)
   const docs = getDocs(directory)
   return {
