@@ -1,5 +1,5 @@
 {
-  "name": "documenting-design-systems-in-nextjs",
+  "name": "documenting-systems-in-nextjs",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -18,7 +18,6 @@
     "@babel/preset-typescript": "^7.16.7",
     "@babel/standalone": "^7.16.7",
     "@babel/types": "^7.16.7",
-    "@leafac/rehype-shiki": "^2.1.0",
     "@mdx-js/react": "^2.0.0-rc.2",
     "@monaco-editor/loader": "^1.2.0",
     "@react-aria/utils": "^3.11.0",
@@ -48,9 +47,7 @@
     "onigasm": "^2.2.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "rehype-shiki": "^0.0.9",
     "shiki": "^0.10.0",
-    "shiki-languages": "^0.2.7",
     "style-loader": "^3.3.1",
     "styled-components": "^5.3.3",
     "tree-visit": "^0.1.0",
