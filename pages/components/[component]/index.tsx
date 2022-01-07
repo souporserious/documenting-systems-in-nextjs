@@ -9,7 +9,7 @@ import { getEditorLink } from 'utils'
 import { allComponents } from '.data'
 
 export default function Component({ component }) {
-  const Readme = useComponent(component.readme.code)
+  const Readme = useComponent(component.readme?.code)
   return (
     <>
       <Head>
@@ -56,6 +56,7 @@ export default function Component({ component }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {component.docs.map((doc) => (
                 <div
+                  key={doc.name}
                   style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
                 >
                   <h3>{doc.name}</h3>
