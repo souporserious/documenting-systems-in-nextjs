@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, writeFileSync } from 'fs'
 import { performance } from 'perf_hooks'
 import { getComponents } from './get-components'
 import { getHooks } from './get-hooks'
+import { getUtils } from './get-utils'
 import { componentsSourceFile, hooksSourceFile, project } from './project'
 
 const DEBUG = process.argv.includes('--debug')
@@ -38,6 +39,19 @@ async function writeHooksData() {
   )
 }
 
+async function writeUtilsData() {
+  const utils = await getUtils()
+
+  if (DEBUG) {
+    console.log('writing utils to cache...')
+  }
+
+  writeFileSync(
+    `${cacheDirectory}/utils.ts`,
+    `export const allUtils = ${JSON.stringify(utils, null, 2)}`
+  )
+}
+
 async function writeTypesData() {
   const result = project.emitToMemory()
   const declarationFiles = result.getFiles().map((file) => ({
@@ -58,12 +72,13 @@ async function writeTypesData() {
 async function writeData() {
   await writeComponentsData()
   await writeHooksData()
+  await writeUtilsData()
   await writeTypesData()
 
   /** Create a barrel export for each data set. */
   writeFileSync(
     `${cacheDirectory}/index.ts`,
-    ['components', 'hooks', 'types']
+    ['components', 'hooks', 'utils', 'types']
       .map((name) => `export * from './${name}'`)
       .join('\n')
   )

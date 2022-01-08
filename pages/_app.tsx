@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useRemoteRefresh } from 'next-remote-refresh/hook'
 import { Spacer } from 'components'
 
-import { allComponents, allHooks } from '.data'
+import { allComponents, allHooks, allUtils } from '.data'
 
 import '../app.css'
 
@@ -61,6 +61,14 @@ export default function App({ Component, pageProps }) {
         </li>
         {allHooks.map(({ name, slug }) => (
           <NavLink key={name} to={`/hooks/${slug}`}>
+            {name}
+          </NavLink>
+        ))}
+        <li>
+          <h3 style={{ padding: 8 }}>Utils</h3>
+        </li>
+        {allUtils.map(({ name, slug }) => (
+          <NavLink key={name} to={`/utils/${slug}`}>
             {name}
           </NavLink>
         ))}

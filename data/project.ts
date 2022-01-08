@@ -10,8 +10,13 @@ export const project = new Project({
   skipAddingFilesFromTsConfig: true,
 })
 
-project.addSourceFilesAtPaths(['components/**/*.{ts,tsx}', 'hooks/**/*.ts'])
+project.addSourceFilesAtPaths([
+  'components/**/*.{ts,tsx}',
+  'hooks/**/*.ts',
+  'utils/**/*.ts',
+])
 
 export const typeChecker = project.getTypeChecker()
 export const componentsSourceFile = project.getSourceFile('components/index.ts')
 export const hooksSourceFile = project.getSourceFile('hooks/index.ts')
+export const utilsSourceFile = project.getSourceFile('utils/index.ts')
