@@ -1,12 +1,13 @@
 import { kebabCase } from 'case-anything'
 import { Node } from 'ts-morph'
-import { transformCode } from './transform-code'
+import { getTypes } from './get-types'
 import { utilsSourceFile } from './project'
+import { transformCode } from './transform-code'
 
 export async function getUtils() {
-  return Promise.all(
-    Array.from(utilsSourceFile.getExportedDeclarations())
-      .map(async ([name, [declaration]]) => {
+  const allUtils = await Promise.all(
+    Array.from(utilsSourceFile.getExportedDeclarations()).map(
+      async ([name, [declaration]]) => {
         if (!Node.isFunctionDeclaration(declaration)) {
           return null
         }
@@ -38,13 +39,16 @@ export async function getUtils() {
           description,
           examples,
           name,
+          types: getTypes(declaration),
           slug: kebabCase(name),
           path:
             process.env.NODE_ENV === 'development'
               ? path
               : path.replace(process.cwd(), ''),
         }
-      })
-      .filter(Boolean)
+      }
+    )
   )
+
+  return allUtils.filter(Boolean)
 }

@@ -1,13 +1,4 @@
-/**
- * Opens the source file in the respective IDE.
- * Forked from: https://github.com/siddharthkp/babel-plugin-open-source
- */
-export function getEditorLink({
-  path,
-  line = 0,
-  column = 0,
-  editor = 'vscode',
-}: {
+export type EditorLinkOptions = {
   /** Path of the file to be opened. */
   path: string
 
@@ -19,7 +10,18 @@ export function getEditorLink({
 
   /** The IDE the file should be opened in. */
   editor?: 'sublime' | 'phpstorm' | 'atom' | 'vscode-insiders' | 'vscode'
-}) {
+}
+
+/**
+ * Opens the source file in the respective IDE.
+ * Forked from: https://github.com/siddharthkp/babel-plugin-open-source
+ */
+export function getEditorLink({
+  path,
+  line = 0,
+  column = 0,
+  editor = 'vscode',
+}: EditorLinkOptions) {
   switch (editor) {
     case 'sublime':
       return `subl://open?url=file://${path}&line=${line}&column=${column}`

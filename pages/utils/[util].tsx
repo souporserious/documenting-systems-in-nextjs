@@ -18,6 +18,34 @@ export default function Util({ util }) {
             <a href={getSourceLink({ path: util.path })}>View Source</a>
           )}
         </Stack>
+        {util.types.map((type) => (
+          <div
+            key={type.name}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 8,
+            }}
+          >
+            <Stack gap={32}>
+              <h4 style={{ fontWeight: 600, margin: 0 }}>{type.name}</h4>
+              {Array.isArray(type.type) ? (
+                <Stack gap={16}>
+                  {type.type.map((subType) => (
+                    <Stack key={subType.name} gap={8}>
+                      <h5 style={{ margin: 0 }}>{subType.name}</h5>
+                      <code>{subType.type}</code>
+                      <p>{subType.comment}</p>
+                    </Stack>
+                  ))}
+                </Stack>
+              ) : (
+                <code>{type.type}</code>
+              )}
+            </Stack>
+            {type.comment && <p style={{ margin: 0 }}>{type.comment[0]}</p>}
+          </div>
+        ))}
       </Stack>
     </>
   )
