@@ -1,10 +1,10 @@
 // Forked from: https://github.com/rsclarke/rehype-shiki
+import hastToString from 'hast-util-to-string'
 import * as shiki from 'shiki'
 import { access, findAll, findIndexPath } from 'tree-visit'
-import hastToString from 'hast-util-to-string'
 
 function tokensToHast(lines: shiki.IThemedToken[][]) {
-  let tree = []
+  const tree = []
 
   for (const line of lines) {
     if (line.length === 0) {
@@ -54,31 +54,45 @@ function getLanguage(node: any) {
   return null
 }
 
-function highlightBlock(highlighter: shiki.Highlighter, node: any) {
+function highlightBlock(
+  highlighter: shiki.Highlighter,
+  theme: shiki.Theme,
+  node: any
+) {
   const language = getLanguage(node)
   if (language) {
-    const tokens = highlighter.codeToThemedTokens(hastToString(node), language)
+    const tokens = highlighter.codeToThemedTokens(
+      hastToString(node),
+      language,
+      theme,
+      { includeExplanation: false }
+    )
     node.children = tokensToHast(tokens)
   }
 }
 
-async function getTheme(theme: string) {
-  return shiki.loadTheme(theme)
-}
-
-async function getHighlighter(theme: string) {
-  const loadedTheme = await getTheme(theme)
-  return shiki.getHighlighter({
+export async function getHighlighter(theme: string) {
+  const loadedTheme = await shiki.loadTheme(theme)
+  const highlighter = await shiki.getHighlighter({
     theme: loadedTheme,
-    langs: [],
+    langs: ['js', 'jsx', 'ts', 'tsx'],
   })
+  return {
+    theme: loadedTheme,
+    highlighter,
+  }
 }
 
 const getChildren = (node) => node.children || []
 
-export function rehypeShikiPlugin({ theme }: { theme?: string } = {}) {
+export function rehypeShikiPlugin({
+  theme,
+  highlighter,
+}: {
+  theme: shiki.Theme
+  highlighter: shiki.Highlighter
+}) {
   return async function transformer(tree) {
-    const highlighter = await getHighlighter(theme)
     const languageCodeBlocks = findAll(tree, {
       getChildren,
       predicate: (node) => {
@@ -95,7 +109,7 @@ export function rehypeShikiPlugin({ theme }: { theme?: string } = {}) {
     })
 
     languageCodeBlocks.forEach((node) => {
-      highlightBlock(highlighter, node)
+      highlightBlock(highlighter, theme, node)
     })
   }
 }
