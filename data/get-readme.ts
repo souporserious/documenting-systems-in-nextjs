@@ -4,7 +4,6 @@ import matter from 'gray-matter'
 import { dirname, resolve } from 'path'
 import { StringDecoder } from 'string_decoder'
 import xdm from 'xdm/esbuild.js'
-import type { Options } from 'xdm/lib/integration/esbuild'
 import { rehypeMetaPlugin } from './rehype-meta-plugin'
 import { getHighlighter, rehypeShikiPlugin } from './rehype-shiki-plugin'
 import { remarkExamplePlugin } from './remark-example-plugin'
@@ -23,52 +22,43 @@ export async function getReadme(directoryPath) {
     return null
   }
 
+  if (highlighter === null) {
+    highlighter = await getHighlighter(
+      resolve(process.cwd(), 'theme/code.json')
+    )
+  }
+
   try {
-    const result = matter(readmeContents)
-
-    if (highlighter === null) {
-      highlighter = await getHighlighter(
-        resolve(process.cwd(), 'theme/code.json')
-      )
-    }
-
-    const { code, examples } = await transformReadme(readmePath)
+    const examples = []
+    const frontMatter = matter(readmeContents)
+    const result = await esbuild.build({
+      entryPoints: [readmePath],
+      absWorkingDir: dirname(readmePath),
+      target: 'esnext',
+      format: 'esm',
+      bundle: true,
+      write: false,
+      minify: process.env.NODE_ENV === 'production',
+      plugins: [
+        xdm({
+          providerImportSource: '@mdx-js/react',
+          remarkPlugins: [[remarkExamplePlugin, { examples }]],
+          rehypePlugins: [rehypeMetaPlugin, [rehypeShikiPlugin, highlighter]],
+        }),
+      ],
+      external: ['react', 'react-dom', '@mdx-js/react'],
+    })
+    const bundledReadme = new StringDecoder('utf-8').write(
+      Buffer.from(result.outputFiles[0].contents)
+    )
+    const transformedReadme = await transformCode(bundledReadme)
 
     return {
-      data: result.data,
-      code,
+      code: transformedReadme,
+      data: frontMatter.data,
       examples,
     }
   } catch (error) {
     throw Error(`Error parsing README.mdx at "${readmePath}": ${error}`)
-  }
-}
-
-async function transformReadme(readmePath) {
-  const examples = []
-  const xdmOptions: Options = {
-    providerImportSource: '@mdx-js/react',
-    remarkPlugins: [[remarkExamplePlugin, { examples }]],
-    rehypePlugins: [rehypeMetaPlugin, [rehypeShikiPlugin, highlighter]],
-  }
-  const result = await esbuild.build({
-    entryPoints: [readmePath],
-    absWorkingDir: dirname(readmePath),
-    target: 'esnext',
-    format: 'esm',
-    bundle: true,
-    write: false,
-    minify: process.env.NODE_ENV === 'production',
-    plugins: [xdm(xdmOptions)],
-    external: ['react', 'react-dom', '@mdx-js/react'],
-  })
-  const bundledReadme = new StringDecoder('utf-8').write(
-    Buffer.from(result.outputFiles[0].contents)
-  )
-  const transformedReadme = await transformCode(bundledReadme)
-
-  return {
-    code: transformedReadme,
-    examples,
   }
 }
