@@ -25,13 +25,13 @@ export default function Hook({ hook }) {
         <title>Hooks / {hook.name}</title>
       </Head>
       <Stack gap={32}>
+        {hook.path && (
+          <a href={getSourceLink({ path: hook.path })}>View Source</a>
+        )}
         <code>import {`{ ${hook.name} }`} from 'hooks'</code>
         <Stack gap={16}>
           <h1>{hook.name}</h1>
           <p>{hook.description}</p>
-          {hook.path && (
-            <a href={getSourceLink({ path: hook.path })}>View Source</a>
-          )}
         </Stack>
         <Stack gap={16}>
           <h2>Examples</h2>

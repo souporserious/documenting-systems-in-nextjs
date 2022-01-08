@@ -10,13 +10,13 @@ export default function Util({ util }) {
         <title>Utils / {util.name}</title>
       </Head>
       <Stack gap={32}>
+        {util.path && (
+          <a href={getSourceLink({ path: util.path })}>View Source</a>
+        )}
         <code>import {`{ ${util.name} }`} from 'utils'</code>
         <Stack gap={16}>
           <h1>{util.name}</h1>
           <p>{util.description}</p>
-          {util.path && (
-            <a href={getSourceLink({ path: util.path })}>View Source</a>
-          )}
         </Stack>
         {util.types.map((type) => (
           <div

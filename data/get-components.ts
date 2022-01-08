@@ -26,7 +26,7 @@ async function getDirectoryDocs(directory: Directory) {
     slug: kebabCase(name),
     path:
       process.env.NODE_ENV === 'development'
-        ? path + '/index.ts'
+        ? path + (readme ? '/README.mdx' : '/index.ts')
         : path.replace(process.cwd(), ''),
   }
 }
