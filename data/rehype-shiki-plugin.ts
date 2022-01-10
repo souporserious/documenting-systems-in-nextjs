@@ -6,20 +6,20 @@ import { access, findAll, findIndexPath } from 'tree-visit'
 function tokensToHast(lines: shiki.IThemedToken[][]) {
   const tree = []
 
-  for (const line of lines) {
+  lines.forEach((line) => {
     if (line.length === 0) {
       tree.push({ type: 'text', value: '\n' })
     } else {
-      for (const token of line) {
+      line.forEach((token) => {
         let style = `color: ${token.color};`
 
-        if (token.fontStyle & shiki.FontStyle.Italic) {
+        if (token.fontStyle === shiki.FontStyle.Italic) {
           style += ' font-style: italic;'
         }
-        if (token.fontStyle & shiki.FontStyle.Bold) {
+        if (token.fontStyle === shiki.FontStyle.Bold) {
           style += ' font-weight: bold;'
         }
-        if (token.fontStyle & shiki.FontStyle.Underline) {
+        if (token.fontStyle === shiki.FontStyle.Underline) {
           style += ' text-decoration: underline;'
         }
 
@@ -29,29 +29,19 @@ function tokensToHast(lines: shiki.IThemedToken[][]) {
           properties: { style },
           children: [{ type: 'text', value: token.content }],
         })
-      }
+      })
 
       tree.push({ type: 'text', value: '\n' })
     }
-  }
+  })
 
   return tree
 }
 
-function getLanguage(node: any) {
-  const props = (node.properties || {}) as Record<string, string[]>
-  const className = props.className || []
-  let value: string
+function getLanguage(className = []) {
+  const language = className.find((name) => name.startsWith('language-'))
 
-  for (const element of className) {
-    value = element
-
-    if (value.slice(0, 9) === 'language-') {
-      return value.slice(9)
-    }
-  }
-
-  return null
+  return language ? language.slice(9) : null
 }
 
 function highlightBlock(
@@ -59,7 +49,8 @@ function highlightBlock(
   theme: shiki.Theme,
   node: any
 ) {
-  const language = getLanguage(node)
+  const language = getLanguage(node.properties.className)
+
   if (language) {
     const tokens = highlighter.codeToThemedTokens(
       hastToString(node),
@@ -67,6 +58,7 @@ function highlightBlock(
       theme,
       { includeExplanation: false }
     )
+
     node.children = tokensToHast(tokens)
   }
 }
@@ -77,6 +69,7 @@ export async function getHighlighter(theme: string) {
     theme: loadedTheme,
     langs: ['js', 'jsx', 'ts', 'tsx'],
   })
+
   return {
     theme: loadedTheme,
     highlighter,
