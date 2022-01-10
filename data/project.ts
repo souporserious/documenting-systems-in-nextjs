@@ -11,8 +11,13 @@ export const project = new Project({
 })
 
 export const typeChecker = project.getTypeChecker()
+
 export const componentsSourceFile = project.addSourceFileAtPath(
   'components/index.ts'
 )
+
 export const hooksSourceFile = project.addSourceFileAtPath('hooks/index.ts')
+
 export const utilsSourceFile = project.addSourceFileAtPath('utils/index.ts')
+
+project.resolveSourceFileDependencies()
