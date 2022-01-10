@@ -1,10 +1,5 @@
-import {
-  Node,
-  Symbol,
-  Type,
-  FunctionDeclaration,
-  TypeFormatFlags,
-} from 'ts-morph'
+import type { FunctionDeclaration, Symbol, Type } from 'ts-morph'
+import { Node, TypeFormatFlags } from 'ts-morph'
 
 export function getTypes(declaration: FunctionDeclaration) {
   const types = declaration.getParameters().map((parameter) => {
@@ -16,14 +11,16 @@ export function getTypes(declaration: FunctionDeclaration) {
       declaration,
       TypeFormatFlags.UseAliasDefinedOutsideCurrentScope
     )
+    let name = parameterName
+
+    if (kindName === 'TypeReference') {
+      name = typeText
+    } else if (parameterName.startsWith('__')) {
+      name = null
+    }
 
     return {
-      name:
-        kindName === 'TypeReference'
-          ? typeText
-          : parameterName.startsWith('__')
-          ? null
-          : parameterName,
+      name,
       type:
         kindName === 'TypeLiteral' || kindName === 'TypeReference'
           ? parseType(declaration, parameterType)
@@ -31,19 +28,19 @@ export function getTypes(declaration: FunctionDeclaration) {
     }
   })
 
-  return types
+  return types.filter(Boolean)
 }
 
 function parseType(declaration: Node, type: Type) {
   const apparentProperties = type.getApparentProperties()
 
   if (apparentProperties.length > 0) {
-    return apparentProperties.flatMap((property) =>
-      getPropertyType(declaration, property)
-    )
-  } else {
-    return type.getApparentType().getText()
+    return apparentProperties
+      .flatMap((property) => getPropertyType(declaration, property))
+      .filter(Boolean)
   }
+
+  return type.getApparentType().getText()
 }
 
 function getPropertyType(declaration: Node, property: Symbol) {
