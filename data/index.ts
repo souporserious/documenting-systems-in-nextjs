@@ -17,7 +17,12 @@ async function writeComponentsData() {
   const components = await getComponents()
 
   if (DEBUG) {
-    console.log('writing components to cache...')
+    console.log(
+      `writing ${components.reduce(
+        (total, component) => total + component.docs.length,
+        0
+      )} components to cache...`
+    )
   }
 
   writeFileSync(
@@ -30,7 +35,7 @@ async function writeHooksData() {
   const hooks = await getHooks()
 
   if (DEBUG) {
-    console.log('writing hooks to cache...')
+    console.log(`writing ${hooks.length} hooks to cache...`)
   }
 
   writeFileSync(
@@ -43,7 +48,7 @@ async function writeUtilsData() {
   const utils = await getUtils()
 
   if (DEBUG) {
-    console.log('writing utils to cache...')
+    console.log(`writing ${utils.length} utils to cache...`)
   }
 
   writeFileSync(
