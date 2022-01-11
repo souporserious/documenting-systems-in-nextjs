@@ -49,6 +49,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "red-snapper": "^1.2.0",
+    "remark-frontmatter": "^3.0.0",
     "shiki": "^0.10.0",
     "style-loader": "^3.3.1",
     "styled-components": "^5.3.3",
@@ -59,6 +60,7 @@
     "url-loader": "^4.1.1",
     "use-item-list": "^0.1.2",
     "xdm": "^3.3.1",
+    "yaml": "^1.10.2",
     "zustand": "^3.6.8"
   }
 }

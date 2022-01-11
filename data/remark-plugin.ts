@@ -1,17 +1,24 @@
+import { kebabCase } from 'case-anything'
 import { readFileSync } from 'fs'
 import { basename, resolve } from 'path'
-import { kebabCase } from 'case-anything'
+import YAML from 'yaml'
 
 /**
- * Custom Remark plugin to add Example meta data attributes.
+ * Custom Remark plugin to parse Front Matter and add Example metadata attributes.
  */
-export function remarkExamplePlugin({ examples }) {
+export function remarkPlugin({ examples, onData }) {
   return (tree, file) => {
-    /** Parse Example components: <Example source="./Example.tsx" />  */
     tree.children.forEach((node, index) => {
+      /** Parse YAML data from remark-frontmatter.  */
+      if (node.type === 'yaml') {
+        onData(YAML.parse(node.value))
+      }
+
       /**
+       * Parse Example components: <Example source="./Example.tsx" />
+       *
        * Instead of filtering out, we skip over so we can use the index to look
-       * up the nearest heading
+       * up the nearest heading.
        */
       if (node.type === 'mdxJsxFlowElement' && node.name === 'Example') {
         const sourceAttribute = node.attributes.find(
