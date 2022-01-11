@@ -29,7 +29,7 @@ export async function getReadme(directoryPath) {
 
     if (highlighter === null) {
       highlighter = await getHighlighter(
-        resolve(process.cwd(), 'src/theme.json')
+        resolve(process.cwd(), 'theme/code.json')
       )
     }
 

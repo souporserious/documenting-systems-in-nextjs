@@ -4,7 +4,12 @@ import { performance } from 'perf_hooks'
 import { getComponents } from './get-components'
 import { getHooks } from './get-hooks'
 import { getUtils } from './get-utils'
-import { componentsSourceFile, hooksSourceFile, project } from './project'
+import {
+  componentsSourceFile,
+  hooksSourceFile,
+  project,
+  utilsSourceFile,
+} from './project'
 
 const DEBUG = process.argv.includes('--debug')
 const cacheDirectory = '.data'
@@ -14,11 +19,11 @@ if (!existsSync(cacheDirectory)) {
 }
 
 async function writeComponentsData() {
-  const components = await getComponents()
+  const allComponents = await getComponents()
 
   if (DEBUG) {
     console.log(
-      `writing ${components.reduce(
+      `writing ${allComponents.reduce(
         (total, component) => total + component.docs.length,
         0
       )} components to cache...`
@@ -27,34 +32,40 @@ async function writeComponentsData() {
 
   writeFileSync(
     `${cacheDirectory}/components.ts`,
-    `export const allComponents = ${JSON.stringify(components, null, 2)}`
+    `export const allComponents = ${JSON.stringify(allComponents, null, 2)}`
   )
+
+  return allComponents
 }
 
 async function writeHooksData() {
-  const hooks = await getHooks()
+  const allHooks = await getHooks()
 
   if (DEBUG) {
-    console.log(`writing ${hooks.length} hooks to cache...`)
+    console.log(`writing ${allHooks.length} hooks to cache...`)
   }
 
   writeFileSync(
     `${cacheDirectory}/hooks.ts`,
-    `export const allHooks = ${JSON.stringify(hooks, null, 2)}`
+    `export const allHooks = ${JSON.stringify(allHooks, null, 2)}`
   )
+
+  return allHooks
 }
 
 async function writeUtilsData() {
-  const utils = await getUtils()
+  const allUtils = await getUtils()
 
   if (DEBUG) {
-    console.log(`writing ${utils.length} utils to cache...`)
+    console.log(`writing ${allUtils.length} utils to cache...`)
   }
 
   writeFileSync(
     `${cacheDirectory}/utils.ts`,
-    `export const allUtils = ${JSON.stringify(utils, null, 2)}`
+    `export const allUtils = ${JSON.stringify(allUtils, null, 2)}`
   )
+
+  return allUtils
 }
 
 async function writeTypesData() {
@@ -75,21 +86,44 @@ async function writeTypesData() {
 }
 
 async function writeData() {
-  await writeComponentsData()
-  await writeHooksData()
-  await writeUtilsData()
+  const allComponents = await writeComponentsData()
+  const allHooks = await writeHooksData()
+  const allUtils = await writeUtilsData()
+  const allLinks = {
+    Components: allComponents.map((component) => ({
+      name: component.name,
+      slug: `/components/${component.slug}`,
+    })),
+    Hooks: allHooks.map((hook) => ({
+      name: hook.name,
+      slug: `/hooks/${hook.slug}`,
+    })),
+    Utils: allUtils.map((util) => ({
+      name: util.name,
+      slug: `/utils/${util.slug}`,
+    })),
+  }
+
+  /** Generate types for Monaco Editor. */
   await writeTypesData()
+
+  /** Create links for each data set. This keeps the client import lightweight. */
+  writeFileSync(
+    `${cacheDirectory}/links.ts`,
+    `export const allLinks = ${JSON.stringify(allLinks, null, 2)}`
+  )
 
   /** Create a barrel export for each data set. */
   writeFileSync(
     `${cacheDirectory}/index.ts`,
-    ['components', 'hooks', 'utils', 'types']
+    ['components', 'hooks', 'utils', 'links', 'types']
       .map((name) => `export * from './${name}'`)
       .join('\n')
   )
 }
 
 const start = performance.now()
+
 if (DEBUG) {
   console.log('start gathering data...')
 }
@@ -107,8 +141,9 @@ writeData().then(() => {
 
 if (process.argv.includes('--watch')) {
   const watcher = chokidar.watch([
-    componentsSourceFile.getDirectoryPath() + '/**/*.(ts|tsx|mdx)',
-    hooksSourceFile.getDirectoryPath() + '/**/*.(ts|tsx|mdx)',
+    `${componentsSourceFile.getDirectoryPath()}/**/*.(ts|tsx|mdx)`,
+    `${hooksSourceFile.getDirectoryPath()}/**/*.(ts|tsx|mdx)`,
+    `${utilsSourceFile.getDirectoryPath()}/**/*.(ts|tsx|mdx)`,
   ])
 
   /**

@@ -2,10 +2,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useRemoteRefresh } from 'next-remote-refresh/hook'
 import { Spacer } from 'components'
-
-import { allComponents, allHooks, allUtils } from '.data'
+import { allLinks } from '.data'
 
 import '../app.css'
+import { Fragment } from 'react'
 
 function Nav({ children }) {
   return (
@@ -47,30 +47,18 @@ export default function App({ Component, pageProps }) {
         <NavLink to="/">👻</NavLink>
         <NavLink to="/playground">Playground</NavLink>
         <Spacer size="16px" />
-        <li>
-          <h3 style={{ padding: 8 }}>Components</h3>
-        </li>
-        {allComponents.map(({ name, slug }) => (
-          <NavLink key={name} to={`/components/${slug}`}>
-            {name}
-          </NavLink>
-        ))}
-        <Spacer size="16px" />
-        <li>
-          <h3 style={{ padding: 8 }}>Hooks</h3>
-        </li>
-        {allHooks.map(({ name, slug }) => (
-          <NavLink key={name} to={`/hooks/${slug}`}>
-            {name}
-          </NavLink>
-        ))}
-        <li>
-          <h3 style={{ padding: 8 }}>Utils</h3>
-        </li>
-        {allUtils.map(({ name, slug }) => (
-          <NavLink key={name} to={`/utils/${slug}`}>
-            {name}
-          </NavLink>
+        {Object.entries(allLinks).map(([category, links]) => (
+          <Fragment key={category}>
+            <li>
+              <h3 style={{ padding: 8 }}>{category}</h3>
+            </li>
+            {links.map(({ name, slug }) => (
+              <NavLink key={name} to={slug}>
+                {name}
+              </NavLink>
+            ))}
+            <Spacer size="16px" />
+          </Fragment>
         ))}
       </Nav>
       <div style={{ maxWidth: '80ch', padding: 40 }}>
