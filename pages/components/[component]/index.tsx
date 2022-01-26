@@ -74,12 +74,15 @@ export default function Component({ component }) {
                     >
                       <div style={{ display: 'flex', gap: 8 }}>
                         <h4 style={{ fontWeight: 600, margin: 0 }}>
-                          {type.name}
+                          {type.name} {type.required && '*'}
                         </h4>
-                        <code>{type.type}</code>
+                        <code>
+                          {type.type}{' '}
+                          {type.defaultValue && `= ${type.defaultValue}`}
+                        </code>
                       </div>
-                      {type.comment && (
-                        <p style={{ margin: 0 }}>{type.comment[0]}</p>
+                      {type.description && (
+                        <p style={{ margin: 0 }}>{type.description}</p>
                       )}
                     </div>
                   ))}

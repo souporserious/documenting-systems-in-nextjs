@@ -24,7 +24,7 @@ export type ButtonProps = {
  * Button allows users to take specific actions.
  */
 export function Button({
-  variant,
+  variant = 'primary',
   backgroundColor: propsBackgroundColor,
   color: propsColor,
   children,

@@ -6,7 +6,7 @@ import { Box, ButtonProps, variants } from 'components'
  */
 export function IconButton({
   icon,
-  variant,
+  variant = 'primary',
   backgroundColor: propsBackgroundColor,
   color: propsColor,
   style,

@@ -1,11 +1,16 @@
-import { Node } from 'ts-morph'
+import type {
+  BindingElement,
+  PropertyAssignment,
+  PropertySignature,
+} from 'ts-morph'
+import { Node, TypeFormatFlags } from 'ts-morph'
 import { typeChecker } from './project'
 
 export function getComponentTypes(declaration: Node) {
   const signatures = declaration.getType().getCallSignatures()
 
   if (signatures.length === 0) {
-    return []
+    return null
   }
 
   const [propsSignature] = signatures
@@ -17,10 +22,18 @@ export function getComponentTypes(declaration: Node) {
       props,
       valueDeclaration
     )
+    const firstChild = valueDeclaration.getFirstChild()
+    let defaultValues = {}
+
+    if (Node.isObjectBindingPattern(firstChild)) {
+      defaultValues = getDefaultValuesFromProperties(firstChild.getElements())
+    }
+
     return propsType
       .getApparentProperties()
       .map((prop) => {
-        const [propDeclaration] = prop.getDeclarations()
+        const declarations = prop.getDeclarations()
+        const propDeclaration = declarations[0] as PropertySignature
         if (
           propDeclaration === undefined ||
           propDeclaration.getSourceFile().getFilePath().includes('node_modules')
@@ -28,7 +41,9 @@ export function getComponentTypes(declaration: Node) {
           return null
         }
         if (propDeclaration) {
-          const [comment] = prop
+          const propName = prop.getName()
+          const propType = prop.getTypeAtLocation(declaration)
+          const description = prop
             .getDeclarations()
             .filter(Node.isJSDocable)
             .map((declaration) =>
@@ -37,16 +52,44 @@ export function getComponentTypes(declaration: Node) {
                 .map((doc) => doc.getComment())
                 .flat()
             )
+            .join('\n')
+          const defaultValue = defaultValues[propName] || null
+
           return {
-            name: prop.getName(),
-            type: prop.getTypeAtLocation(declaration).getText(),
-            comment: comment ?? null,
+            name: propName,
+            required: !propDeclaration.hasQuestionToken() && !defaultValue,
+            description: description || null,
+            type: propType.getText(
+              propDeclaration,
+              TypeFormatFlags.UseAliasDefinedOutsideCurrentScope
+            ),
+            defaultValue,
           }
         }
         return null
       })
       .filter(Boolean)
   }
+  return null
+}
 
-  return []
+function getDefaultValuesFromProperties(
+  properties: Array<PropertyAssignment | BindingElement>
+) {
+  const defaultValues: Record<string, string | boolean | number | null> = {}
+
+  properties.forEach((property) => {
+    if (Node.isSpreadAssignment(property) || !property.getName()) {
+      return
+    }
+
+    const name = property.getName()
+    const initializer = property.getInitializer()
+
+    if (initializer) {
+      defaultValues[name] = initializer.getText()
+    }
+  })
+
+  return defaultValues
 }
