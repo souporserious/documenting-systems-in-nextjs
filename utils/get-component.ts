@@ -1,6 +1,4 @@
-import { MdxContentProps } from 'xdm/complex-types'
-
-export function getComponent(
+export function getComponent<ComponentType extends any>(
   codeString: string,
   dependencies: Record<string, unknown>
 ) {
@@ -15,5 +13,5 @@ export function getComponent(
 
   result(exports, require)
 
-  return exports.default as React.ComponentType<MdxContentProps>
+  return exports.default as React.ComponentType<ComponentType>
 }

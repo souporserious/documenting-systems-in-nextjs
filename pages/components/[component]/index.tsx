@@ -9,7 +9,7 @@ import { getSourceLink } from 'utils'
 import { allComponents } from '.data'
 
 export default function Component({ component }) {
-  const Readme = useComponent(component.readme?.code)
+  const readmeElement = useComponent(component.readme?.code)
   return (
     <>
       <Head>
@@ -46,7 +46,7 @@ export default function Component({ component }) {
                 },
               }}
             >
-              <Readme />
+              {readmeElement}
             </MDXProvider>
           )}
         </div>

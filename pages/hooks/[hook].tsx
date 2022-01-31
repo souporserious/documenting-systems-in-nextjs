@@ -9,10 +9,10 @@ function Example({
 }: {
   example: { code: string; compiledCode: string }
 }) {
-  const Component = useComponent(example.compiledCode)
+  const hookExampleElement = useComponent(example.compiledCode)
   return (
     <div>
-      <Component />
+      {hookExampleElement}
       <pre>{example.code}</pre>
     </div>
   )

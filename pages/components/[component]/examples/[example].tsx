@@ -6,7 +6,7 @@ import { pascalCase } from 'case-anything'
 import { allComponents } from '.data/components'
 
 export default function Example({ component, example }) {
-  const Component = useComponent(example.compiledCode)
+  const exampleElement = useComponent(example.compiledCode)
   return (
     <>
       <Head>
@@ -19,7 +19,7 @@ export default function Example({ component, example }) {
           <a href={getSourceLink({ path: example.path })}>View Source</a>
         )}
       </div>
-      <Component />
+      {exampleElement}
     </>
   )
 }

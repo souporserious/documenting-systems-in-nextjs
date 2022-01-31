@@ -7,10 +7,10 @@ import * as React from 'react'
  *
  * import { useCompiledCode, useComponent } from 'hooks'
  *
- * export default function Preview() {
+ * export default function Example() {
  *   const compiledCodeString = useCompiledCode('export default () => <div>Hello World</div>')
- *   const Component = useComponent(compiledCodeString)
- *   return Component ? <Component /> : null
+ *   const element = useComponent(compiledCodeString)
+ *   return element
  * }
  */
 export function useCompiledCode(codeString) {

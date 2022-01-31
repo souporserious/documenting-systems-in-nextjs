@@ -7,7 +7,7 @@ import * as React from 'react'
  *
  * import { useHover } from 'hooks'
  *
- * export default function BasicUsage() {
+ * export default function Example() {
  *   const [hover, hoverProps] = useHover()
  *   return (
  *     <div {...hoverProps}>
