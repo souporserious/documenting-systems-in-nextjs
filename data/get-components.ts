@@ -48,7 +48,7 @@ function getReactDocs(name, declaration) {
     return {
       name,
       slug: kebabCase(name),
-      props: getComponentTypes(reactFunctionDeclaration),
+      props: getComponentTypes(reactFunctionDeclaration) || [],
       path:
         process.env.NODE_ENV === 'development'
           ? path
