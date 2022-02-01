@@ -1,7 +1,7 @@
 import * as React from 'react'
 import dynamic from 'next/dynamic'
-import { useCompiledCode, useComponent } from 'hooks'
-import { Spinner } from 'components'
+import { useCompiledCode } from 'hooks'
+import { CompiledComponent, Spinner } from 'components'
 
 const Editor = dynamic(async () => (await import('../Editor')).Editor, {
   ssr: false,
@@ -26,11 +26,6 @@ export function Playground({
   const [value, setValue] = React.useState(null)
   const localCompiledCodeString = useCompiledCode(
     compiledCodeString ? value : codeString
-  )
-  const previewElement = useComponent(
-    value
-      ? localCompiledCodeString
-      : compiledCodeString || localCompiledCodeString
   )
   return (
     <div
@@ -110,7 +105,13 @@ export function Playground({
         )}
       </div>
 
-      {previewElement}
+      <CompiledComponent
+        codeString={
+          value
+            ? localCompiledCodeString
+            : compiledCodeString || localCompiledCodeString
+        }
+      />
     </div>
   )
 }

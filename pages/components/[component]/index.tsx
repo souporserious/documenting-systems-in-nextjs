@@ -3,13 +3,11 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { MDXProvider } from '@mdx-js/react'
 import * as components from 'components'
-import { Playground } from 'components'
-import { useComponent } from 'hooks'
+import { CompiledComponent, Playground } from 'components'
 import { getSourceLink } from 'utils'
 import { allComponents } from '.data'
 
 export default function Component({ component }) {
-  const readmeElement = useComponent(component.readme?.code)
   return (
     <>
       <Head>
@@ -46,7 +44,7 @@ export default function Component({ component }) {
                 },
               }}
             >
-              {readmeElement}
+              <CompiledComponent codeString={component.readme?.code} />
             </MDXProvider>
           )}
         </div>

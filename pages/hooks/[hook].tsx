@@ -1,7 +1,6 @@
 import Head from 'next/head'
-import { Stack } from 'components'
+import { CompiledComponent, Stack } from 'components'
 import { getSourceLink } from 'utils'
-import { useComponent } from 'hooks'
 import { allHooks } from '.data/hooks'
 
 function Example({
@@ -9,10 +8,9 @@ function Example({
 }: {
   example: { code: string; compiledCode: string }
 }) {
-  const hookExampleElement = useComponent(example.compiledCode)
   return (
     <div>
-      {hookExampleElement}
+      <CompiledComponent codeString={example.compiledCode} />
       <pre>{example.code}</pre>
     </div>
   )

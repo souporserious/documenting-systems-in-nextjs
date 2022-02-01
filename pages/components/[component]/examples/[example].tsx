@@ -1,12 +1,11 @@
 import Head from 'next/head'
 import * as React from 'react'
-import { useComponent } from 'hooks'
+import { CompiledComponent } from 'components'
 import { getSourceLink } from 'utils'
 import { pascalCase } from 'case-anything'
 import { allComponents } from '.data/components'
 
-export default function Example({ component, example }) {
-  const exampleElement = useComponent(example.compiledCode)
+export default function Examples({ component, example }) {
   return (
     <>
       <Head>
@@ -19,7 +18,7 @@ export default function Example({ component, example }) {
           <a href={getSourceLink({ path: example.path })}>View Source</a>
         )}
       </div>
-      {exampleElement}
+      <CompiledComponent codeString={example.compiledCode} />
     </>
   )
 }

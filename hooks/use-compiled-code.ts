@@ -5,12 +5,12 @@ import * as React from 'react'
  *
  * @example
  *
- * import { useCompiledCode, useComponent } from 'hooks'
+ * import { CompiledComponent } from 'components'
+ * import { useCompiledCode } from 'hooks'
  *
  * export default function Example() {
  *   const compiledCodeString = useCompiledCode('export default () => <div>Hello World</div>')
- *   const element = useComponent(compiledCodeString)
- *   return element
+ *   return <CompiledComponent codeString={compiledCodeString} />
  * }
  */
 export function useCompiledCode(codeString) {
