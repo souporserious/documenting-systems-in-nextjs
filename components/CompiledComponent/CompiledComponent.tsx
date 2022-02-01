@@ -1,6 +1,19 @@
 import * as React from 'react'
 import { getComponent } from 'utils/get-component'
 
+/**
+ * Execute a string of code and return the default export.
+ * Supports TypeScript and JSX syntax.
+ *
+ * @example
+ *
+ * import { CompiledComponent } from 'components'
+ *
+ * export default function Example() {
+ *   const codeString = `exports.default = () => require('react').createElement('div', null, 'Hello World')`
+ *   return <CompiledComponent codeString={codeString} />
+ * }
+ */
 export class CompiledComponent extends React.Component<{ codeString: string }> {
   state = {
     component: this.props.codeString
