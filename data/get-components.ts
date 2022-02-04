@@ -1,9 +1,10 @@
 import { kebabCase } from 'case-anything'
 import type { CallExpression, Directory } from 'ts-morph'
 import { Node } from 'ts-morph'
+import urlSlug from 'url-slug'
+import { getComponentTypes } from './get-component-types'
 import { getExamples } from './get-examples'
 import { getReadme } from './get-readme'
-import { getComponentTypes } from './get-component-types'
 import { componentsSourceFile } from './project'
 
 export async function getComponents() {
@@ -17,16 +18,34 @@ async function getDirectoryDocs(directory: Directory) {
   const name = directory.getBaseName()
   const readme = await getReadme(path)
   const examples = await getExamples(directory)
-  const docs = getDocs(directory)
+  const types = getDocs(directory)
+
+  /** Append component prop type links to headings data. */
+  if (readme?.data && types.length > 0) {
+    readme.data.headings = [
+      ...readme.data.headings,
+      {
+        slug: `#props`,
+        level: 2,
+        title: 'Props',
+      },
+      ...types.map((type) => ({
+        slug: `#${urlSlug(type.name)}`,
+        level: 3,
+        title: type.name,
+      })),
+    ]
+  }
+
   return {
     name,
     readme,
-    docs,
+    types,
     examples,
     slug: kebabCase(name),
     path:
       process.env.NODE_ENV === 'development'
-        ? path + (readme ? '/README.mdx' : '/index.ts')
+        ? `${path}/index.ts`
         : path.replace(process.cwd(), ''),
   }
 }
@@ -48,13 +67,14 @@ function getReactDocs(name, declaration) {
     return {
       name,
       slug: kebabCase(name),
-      props: getComponentTypes(reactFunctionDeclaration) || [],
+      props: getComponentTypes(reactFunctionDeclaration),
       path:
         process.env.NODE_ENV === 'development'
           ? path
           : path.replace(process.cwd(), ''),
     }
   }
+  return null
 }
 
 export function isComponent(name) {

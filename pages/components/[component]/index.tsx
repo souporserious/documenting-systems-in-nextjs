@@ -48,11 +48,11 @@ export default function Component({ component }) {
             </MDXProvider>
           )}
         </div>
-        {component.docs.length > 0 && (
+        {component.types.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <h2>Props</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {component.docs.map((doc) => (
+              {component.types.map((doc) => (
                 <div
                   key={doc.name}
                   style={{ display: 'flex', flexDirection: 'column', gap: 16 }}

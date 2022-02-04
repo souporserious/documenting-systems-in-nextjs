@@ -2,6 +2,7 @@ import chokidar from 'chokidar'
 import { existsSync, mkdirSync, writeFileSync } from 'fs'
 import { performance } from 'perf_hooks'
 import { getComponents } from './get-components'
+import { getPageLinks } from './get-page-links'
 import { getHooks } from './get-hooks'
 import { getUtils } from './get-utils'
 import {
@@ -24,7 +25,7 @@ async function writeComponentsData() {
   if (DEBUG) {
     console.log(
       `writing ${allComponents.reduce(
-        (total, component) => total + component.docs.length,
+        (total, component) => total + component.types.length,
         0
       )} components to cache...`
     )
@@ -86,6 +87,7 @@ async function writeTypesData() {
 }
 
 async function writeData() {
+  const allPageLinks = getPageLinks()
   const allComponents = await writeComponentsData()
   const allHooks = await writeHooksData()
   const allUtils = await writeUtilsData()
@@ -102,6 +104,7 @@ async function writeData() {
       name: util.name,
       slug: `/utils/${util.slug}`,
     })),
+    ...allPageLinks,
   }
 
   /** Generate types for Monaco Editor. */

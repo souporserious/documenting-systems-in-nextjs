@@ -4,9 +4,9 @@ import { transformCode } from './transform-code'
 import { hooksSourceFile } from './project'
 
 export async function getHooks() {
-  return Promise.all(
-    Array.from(hooksSourceFile.getExportedDeclarations())
-      .map(async ([name, [declaration]]) => {
+  const allHooks = await Promise.all(
+    Array.from(hooksSourceFile.getExportedDeclarations()).map(
+      async ([name, [declaration]]) => {
         if (!Node.isFunctionDeclaration(declaration)) {
           return null
         }
@@ -44,7 +44,9 @@ export async function getHooks() {
               ? path
               : path.replace(process.cwd(), ''),
         }
-      })
-      .filter(Boolean)
+      }
+    )
   )
+
+  return allHooks.filter(Boolean)
 }

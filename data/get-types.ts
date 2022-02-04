@@ -11,7 +11,7 @@ export function getTypes(declaration: FunctionDeclaration) {
       declaration,
       TypeFormatFlags.UseAliasDefinedOutsideCurrentScope
     )
-    let name = parameterName
+    let name = typeText
 
     if (kindName === 'TypeReference') {
       name = typeText

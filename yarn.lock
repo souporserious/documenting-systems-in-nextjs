@@ -2269,6 +2269,16 @@ loader-utils@^2.0.0:
     emojis-list "^3.0.0"
     json5 "^2.1.2"
 
+lodash.groupby@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.groupby/-/lodash.groupby-4.6.0.tgz#0b08a1dcf68397c397855c3239783832df7403d1"
+  integrity sha1-Cwih3PaDl8OXhVwyOXg4Mt90A9E=
+
+lodash.sortby@^4.7.0:
+  version "4.7.0"
+  resolved "https://registry.yarnpkg.com/lodash.sortby/-/lodash.sortby-4.7.0.tgz#edd14c824e2cc9c1e0b0a1b42bb5210516a42438"
+  integrity sha1-7dFMgk4sycHgsKG0K7UhBRakJDg=
+
 lodash@^4.17.11, lodash@^4.17.20, lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
@@ -3777,6 +3787,11 @@ url-loader@^4.1.1:
     loader-utils "^2.0.0"
     mime-types "^2.1.27"
     schema-utils "^3.0.0"
+
+url-slug@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/url-slug/-/url-slug-3.0.3.tgz#23cf0d91c4591f56382b7d8ad67b8dad54d486da"
+  integrity sha512-6iRFiPGMTuu5vBeVk6U7URwqRoMpvzRUg/Ycx0nqeD2g6AULolOTgI928lZeeSX9AIs8Hboh1/SGZTHymTVvRg==
 
 use-constant@^1.1.0:
   version "1.1.0"

@@ -1,8 +1,8 @@
-// https://github.com/wooorm/xdm#syntax-highlighting-with-the-meta-field
 import { visit } from 'tree-visit'
 import { transformSync } from '@swc/core'
 import { options } from './transform-code'
 
+// https://github.com/wooorm/xdm#syntax-highlighting-with-the-meta-field
 const re = /\b([-\w]+)(?:=(?:"([^"]*)"|'([^']*)'|([^"'\s]+)))?/g
 
 export function rehypeMetaPlugin() {
@@ -14,8 +14,8 @@ export function rehypeMetaPlugin() {
 
         if (node.tagName === 'code' && node.data?.meta) {
           const codeString = node.children[0].value
-          node.properties['codeString'] = codeString
-          node.properties['compiledCodeString'] = transformSync(
+          node.properties.codeString = codeString
+          node.properties.compiledCodeString = transformSync(
             codeString,
             options
           ).code

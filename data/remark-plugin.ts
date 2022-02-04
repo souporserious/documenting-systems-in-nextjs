@@ -6,8 +6,8 @@ import YAML from 'yaml'
 /**
  * Custom Remark plugin to parse Front Matter and add Example metadata attributes.
  */
-export function remarkPlugin({ examples, onData }) {
-  return (tree, file) => {
+export function remarkPlugin({ examples, onData, workingDirectory }) {
+  return (tree) => {
     tree.children.forEach((node, index) => {
       /** Parse YAML data from remark-frontmatter.  */
       if (node.type === 'yaml') {
@@ -24,7 +24,9 @@ export function remarkPlugin({ examples, onData }) {
         const sourceAttribute = node.attributes.find(
           (attribute) => attribute.name === 'source'
         )
-        const examplePath = resolve(file.dirname, sourceAttribute.value)
+        const examplePath = sourceAttribute.value.includes('/')
+          ? resolve(workingDirectory, sourceAttribute.value)
+          : resolve(workingDirectory, 'examples', sourceAttribute.value)
 
         try {
           const codeString = readFileSync(examplePath, 'utf-8')

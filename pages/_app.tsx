@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useRemoteRefresh } from 'next-remote-refresh/hook'
 import { Spacer } from 'components'
+import { useRoutes } from 'hooks'
 import { allLinks } from '.data'
 
 import '../app.css'
@@ -26,6 +27,7 @@ function NavLink({ to, children }) {
 }
 
 export default function App({ Component, pageProps }) {
+  const { activeRoute, previousRoute, nextRoute } = useRoutes()
   const router = useRouter()
   const isComponents = router.asPath.includes('components')
 
@@ -61,8 +63,59 @@ export default function App({ Component, pageProps }) {
           </Fragment>
         ))}
       </Nav>
-      <div style={{ maxWidth: '80ch', padding: 40 }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          maxWidth: '80ch',
+          padding: 40,
+        }}
+      >
         <Component {...pageProps} />
+        <nav style={{ marginTop: 'auto' }}>
+          <ul
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              paddingTop: 64,
+            }}
+          >
+            {previousRoute && (
+              <li style={{ gridColumn: 1 }}>
+                <Link href={previousRoute.slug} passHref>
+                  <a
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'start',
+                      gap: 8,
+                    }}
+                  >
+                    <div>Previous</div>
+                    <div>{previousRoute.name}</div>
+                  </a>
+                </Link>
+              </li>
+            )}
+            {nextRoute && (
+              <li style={{ gridColumn: 2 }}>
+                <Link href={nextRoute.slug} passHref>
+                  <a
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'end',
+                      gap: 8,
+                    }}
+                  >
+                    <div>Next</div>
+                    <div>{nextRoute.name}</div>
+                  </a>
+                </Link>
+              </li>
+            )}
+          </ul>
+        </nav>
       </div>
     </div>
   )
