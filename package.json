@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "NODE_ENV=development concurrently 'yarn dev:data' 'yarn dev:next'",
     "dev:data": "yarn prebuild --watch",
-    "dev:next": "next dev -p 4000",
+    "dev:next": "next dev",
     "prebuild": "node data/build",
     "build": "yarn build:data && yarn build:next",
     "build:data": "node data/dist",
