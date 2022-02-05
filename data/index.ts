@@ -1,6 +1,7 @@
 import chokidar from 'chokidar'
 import { existsSync, mkdirSync, writeFileSync } from 'fs'
 import { performance } from 'perf_hooks'
+import { bundleDependencies } from './bundle-dependencies'
 import { getComponents } from './get-components'
 import { getPageLinks } from './get-page-links'
 import { getHooks } from './get-hooks'
@@ -123,6 +124,9 @@ async function writeData() {
       .map((name) => `export * from './${name}'`)
       .join('\n')
   )
+
+  /** Bundle dependencies for use in Sandpack */
+  await bundleDependencies()
 }
 
 const start = performance.now()

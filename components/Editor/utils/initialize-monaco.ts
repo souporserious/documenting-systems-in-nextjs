@@ -32,7 +32,7 @@ export async function initializeMonaco({
   onOpenEditor = () => null,
 }: InitializeMonacoOptions) {
   // @ts-ignore
-  const onigasm = await import('onigasm/lib/onigasm.wasm')
+  const onigasm = await import('../../../node_modules/onigasm/lib/onigasm.js')
 
   try {
     await loadWASM(onigasm.default)
