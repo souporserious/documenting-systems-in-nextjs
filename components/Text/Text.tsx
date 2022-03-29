@@ -1,17 +1,25 @@
 import type { ReactNode } from 'react'
 import { createContext, useContext } from 'react'
 import styled from 'styled-components'
-import { textStyles } from 'theme'
+import { textStyles } from '../../theme'
+
+export type DropDollarPrefix<T> = {
+  [K in keyof T as K extends `$${infer I}` ? I : K]: T[K]
+}
+
+export type TextVariants = keyof typeof textStyles
+
+type StyledTextProps = {
+  $variant?: TextVariants
+  $alignment?: 'start' | 'center' | 'end'
+  $width?: string | number
+  $lineHeight?: string
+}
 
 export type TextProps = {
-  as?: any
-  variant?: keyof typeof textStyles
   className?: string
   children: ReactNode
-  alignment?: 'start' | 'center' | 'end'
-  width?: string | number
-  lineHeight?: string
-}
+} & DropDollarPrefix<StyledTextProps>
 
 const elements = {
   heading1: 'h1',
@@ -20,42 +28,56 @@ const elements = {
   body1: 'p',
   body2: 'p',
   mark: 'mark',
-}
+} as const
 
 const TextAncestorContext = createContext(false)
 
-export const Text = styled(
-  ({
-    as: Element = 'p',
-    variant = 'body1',
-    className,
-    children,
-  }: TextProps) => {
-    const hasTextAncestor = useContext(TextAncestorContext)
-    // @ts-ignore
-    const propElement = elements[variant]
-    if (hasTextAncestor) {
-      Element = 'span'
+export const Text = ({
+  variant = 'body1',
+  alignment,
+  width,
+  lineHeight,
+  children,
+}: TextProps) => {
+  const hasTextAncestor = useContext(TextAncestorContext)
+  const propElement = elements[variant]
+  let asProp: any = 'p'
+
+  if (hasTextAncestor) {
+    asProp = 'span'
+  }
+
+  if (propElement) {
+    asProp = propElement
+  }
+
+  return (
+    <TextAncestorContext.Provider value={true}>
+      <StyledText
+        as={asProp}
+        $alignment={alignment}
+        $lineHeight={lineHeight}
+        $width={width}
+        $variant={variant}
+      >
+        {children}
+      </StyledText>
+    </TextAncestorContext.Provider>
+  )
+}
+
+const StyledText = styled.span<StyledTextProps>(
+  ({ $alignment, $lineHeight, $width, $variant = 'body' }) => {
+    const styles = {
+      margin: 0,
+      textAlign: $alignment,
+      width: $width,
+      ...(textStyles[$variant] ?? {}),
     }
-    if (propElement) {
-      Element = propElement
+    // allow overriding text style line height
+    if ($lineHeight !== undefined) {
+      styles.lineHeight = $lineHeight
     }
-    return (
-      <TextAncestorContext.Provider value={true}>
-        <Element className={className}>{children}</Element>
-      </TextAncestorContext.Provider>
-    )
+    return styles
   }
-)<TextProps>(({ lineHeight, width, alignment, variant = 'body' }) => {
-  const styles = {
-    margin: 0,
-    textAlign: alignment,
-    width,
-    ...(textStyles[variant] ?? {}),
-  }
-  // allow overriding text style line height
-  if (lineHeight !== undefined) {
-    styles.lineHeight = lineHeight
-  }
-  return styles
-})
+)

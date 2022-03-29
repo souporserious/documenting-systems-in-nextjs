@@ -34,39 +34,40 @@ export function getComponentTypes(declaration: Node) {
       .map((prop) => {
         const declarations = prop.getDeclarations()
         const propDeclaration = declarations[0] as PropertySignature
+
         if (
-          propDeclaration === undefined ||
-          propDeclaration.getSourceFile().getFilePath().includes('node_modules')
+          (propDeclaration || declaration)
+            .getSourceFile()
+            .getFilePath()
+            .includes('node_modules')
         ) {
           return null
         }
-        if (propDeclaration) {
-          const propName = prop.getName()
-          const propType = prop.getTypeAtLocation(declaration)
-          const description = prop
-            .getDeclarations()
-            .filter(Node.isJSDocable)
-            .map((declaration) =>
-              declaration
-                .getJsDocs()
-                .map((doc) => doc.getComment())
-                .flat()
-            )
-            .join('\n')
-          const defaultValue = defaultValues[propName] || null
 
-          return {
-            name: propName,
-            required: !propDeclaration.hasQuestionToken() && !defaultValue,
-            description: description || null,
-            type: propType.getText(
-              propDeclaration,
-              TypeFormatFlags.UseAliasDefinedOutsideCurrentScope
-            ),
-            defaultValue,
-          }
+        const propName = prop.getName()
+        const propType = prop.getTypeAtLocation(declaration)
+        const description = prop
+          .getDeclarations()
+          .filter(Node.isJSDocable)
+          .map((declaration) =>
+            declaration
+              .getJsDocs()
+              .map((doc) => doc.getComment())
+              .flat()
+          )
+          .join('\n')
+        const defaultValue = defaultValues[propName] || null
+
+        return {
+          name: propName,
+          required: !propDeclaration?.hasQuestionToken() && !defaultValue,
+          description: description || null,
+          type: propType.getText(
+            declaration,
+            TypeFormatFlags.UseAliasDefinedOutsideCurrentScope
+          ),
+          defaultValue,
         }
-        return null
       })
       .filter(Boolean)
   }

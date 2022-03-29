@@ -70,7 +70,13 @@ export default function Component({ component }) {
                         gap: 8,
                       }}
                     >
-                      <div style={{ display: 'flex', gap: 8 }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'baseline',
+                          gap: 8,
+                        }}
+                      >
                         <h4 style={{ fontWeight: 600, margin: 0 }}>
                           {type.name} {type.required && '*'}
                         </h4>

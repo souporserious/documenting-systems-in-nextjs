@@ -2,13 +2,14 @@ import * as React from 'react'
 
 /**
  * Provides a count that can be incremented and decremented.
+ * TODO: track example values through a proxy so we can preseve the "state" through updates
  *
  * @example
  *
  * import { useCounter } from 'hooks'
  *
- * export default function Example() {
- *   const { count, increment, decrement } = useCounter(0)
+ * export default function Example({ initialCount = 0 }: { initialCount: number }) {
+ *   const { count, increment, decrement } = useCounter(initialCount)
  *   return (
  *     <div>
  *       <button onClick={decrement}>-</button>

@@ -1,5 +1,3 @@
-import { CSSObject } from 'styled-components'
-
 export const size = {
   medium: '784px',
   large: '960px',
@@ -57,6 +55,4 @@ export const textStyles = {
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
   },
-} as {
-  [key: string]: CSSObject
 }
