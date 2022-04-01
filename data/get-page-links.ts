@@ -1,14 +1,14 @@
 import { capitalCase } from 'case-anything'
 import matter from 'gray-matter'
 import groupBy from 'lodash.groupby'
-import orderBy from 'lodash.orderby'
+import sortBy from 'lodash.sortby'
 import { Project, SourceFile } from 'ts-morph'
 
 const project = new Project()
 const sourceFiles = project.addSourceFilesAtPaths([
-  `src/pages/**/*{.tsx,.mdx}`,
-  `!src/pages/_*.tsx`,
-  `!src/pages/api/*.ts`,
+  `pages/**/*{.tsx,.mdx,.json}`,
+  `!pages/_*.tsx`,
+  `!pages/api/*.ts`,
 ])
 
 /** Gathers meta information for page links from the NextJS pages directory. */
@@ -20,6 +20,7 @@ export function getPageLinks() {
         const slug = getSlugFromSourceFile(sourceFile)
         const [categorySlug] = slug.split('/')
         const data = JSON.parse(sourceFile.getFullText())
+
         return [categorySlug, data]
       })
   )
@@ -27,12 +28,13 @@ export function getPageLinks() {
     .filter((sourceFile) => {
       return (
         !sourceFile.getFilePath().includes('[') && // Skip dynamic files
+        sourceFile.getDirectory().getBaseName() !== 'pages' && // Skip pages directory
         sourceFile.getExtension() !== '.json' // Skip meta.json files
       )
     })
     .map((sourceFile) => {
       const slug = getSlugFromSourceFile(sourceFile)
-      const [categorySlug] = slug.split('/')
+      const [categorySlug, baseSlug] = slug.split('/')
       const category = capitalCase(categorySlug)
       let name = sourceFile.getBaseNameWithoutExtension()
 
@@ -47,8 +49,9 @@ export function getPageLinks() {
       }
 
       return {
-        name: capitalCase(name),
+        name: name === 'index' ? category : capitalCase(name),
         slug: `/${slug}`,
+        baseSlug,
         categorySlug,
       }
     })
@@ -61,7 +64,7 @@ export function getPageLinks() {
 
       return [
         metaData?.title || category,
-        orderBy(links, metaData?.order || 'name'),
+        sortBy(links, (link) => metaData?.order.indexOf(link.baseSlug) ?? 0),
       ]
     })
   )
@@ -72,7 +75,7 @@ export function getPageLinks() {
 function getSlugFromSourceFile(sourceFile: SourceFile) {
   return sourceFile
     .getFilePath()
-    .replace(`${process.cwd()}/src/pages/`, '')
+    .replace(`${process.cwd()}/pages/`, '')
     .replace('index', '')
-    .slice(0, -5)
+    .replace('.tsx', '')
 }
