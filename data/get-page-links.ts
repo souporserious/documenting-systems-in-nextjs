@@ -1,7 +1,8 @@
 import { capitalCase } from 'case-anything'
 import matter from 'gray-matter'
 import groupBy from 'lodash.groupby'
-import { Project } from 'ts-morph'
+import orderBy from 'lodash.orderby'
+import { Project, SourceFile } from 'ts-morph'
 
 const project = new Project()
 const sourceFiles = project.addSourceFilesAtPaths([
@@ -10,21 +11,27 @@ const sourceFiles = project.addSourceFilesAtPaths([
   `!src/pages/api/*.ts`,
 ])
 
-/** Gather meta information for page links from the NextJS pages directory. */
+/** Gathers meta information for page links from the NextJS pages directory. */
 export function getPageLinks() {
+  const allPageMetaData = Object.fromEntries(
+    sourceFiles
+      .filter((sourceFile) => sourceFile.getExtension() === '.json')
+      .map((sourceFile) => {
+        const slug = getSlugFromSourceFile(sourceFile)
+        const [categorySlug] = slug.split('/')
+        const data = JSON.parse(sourceFile.getFullText())
+        return [categorySlug, data]
+      })
+  )
   const allPageLinks = sourceFiles
     .filter((sourceFile) => {
       return (
-        sourceFile.getDirectory().getBaseName() !== 'pages' && // Skip pages directory
-        !sourceFile.getFilePath().includes('[') // Skip dynamic files
+        !sourceFile.getFilePath().includes('[') && // Skip dynamic files
+        sourceFile.getExtension() !== '.json' // Skip meta.json files
       )
     })
     .map((sourceFile) => {
-      const slug = sourceFile
-        .getFilePath()
-        .replace(`${process.cwd()}/src/pages/`, '')
-        .replace('index', '')
-        .slice(0, -5)
+      const slug = getSlugFromSourceFile(sourceFile)
       const [categorySlug] = slug.split('/')
       const category = capitalCase(categorySlug)
       let name = sourceFile.getBaseNameWithoutExtension()
@@ -41,12 +48,31 @@ export function getPageLinks() {
 
       return {
         name: capitalCase(name),
-        category: category,
         slug: `/${slug}`,
+        categorySlug,
       }
     })
     .filter(Boolean)
-  const groupedLinks = groupBy(allPageLinks, 'category')
+  const groupedLinks = groupBy(allPageLinks, 'categorySlug')
+  const orderedLinks = Object.fromEntries(
+    Object.entries(groupedLinks).map(([categorySlug, links]) => {
+      const metaData = allPageMetaData[categorySlug]
+      const category = capitalCase(categorySlug)
 
-  return groupedLinks
+      return [
+        metaData?.title || category,
+        orderBy(links, metaData?.order || 'name'),
+      ]
+    })
+  )
+
+  return orderedLinks
+}
+
+function getSlugFromSourceFile(sourceFile: SourceFile) {
+  return sourceFile
+    .getFilePath()
+    .replace(`${process.cwd()}/src/pages/`, '')
+    .replace('index', '')
+    .slice(0, -5)
 }
