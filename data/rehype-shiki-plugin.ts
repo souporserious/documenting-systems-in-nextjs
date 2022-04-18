@@ -69,7 +69,7 @@ export async function getHighlighter(theme: string) {
   const loadedTheme = await shiki.loadTheme(theme)
   const highlighter = await shiki.getHighlighter({
     theme: loadedTheme,
-    langs: ['js', 'jsx', 'ts', 'tsx'],
+    langs: ['js', 'jsx', 'ts', 'tsx', 'bash', 'json', 'yaml'],
   })
 
   return {

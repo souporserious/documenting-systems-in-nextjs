@@ -2,6 +2,7 @@ import chokidar from 'chokidar'
 import { existsSync, mkdirSync, writeFileSync } from 'fs'
 import { performance } from 'perf_hooks'
 import { getComponents } from './get-components'
+import { getDocs } from './get-docs'
 import { getPageLinks } from './get-page-links'
 import { getHooks } from './get-hooks'
 import { getUtils } from './get-utils'
@@ -86,15 +87,35 @@ async function writeTypesData() {
   )
 }
 
+async function writeDocsData() {
+  const allDocs = await getDocs()
+
+  if (DEBUG) {
+    console.log(`writing ${allDocs.length} docs to cache...`)
+  }
+
+  writeFileSync(
+    `${cacheDirectory}/docs.ts`,
+    `export const allDocs = ${JSON.stringify(allDocs, null, 2)}`
+  )
+
+  return allDocs
+}
+
 async function writeData() {
   const allPageLinks = getPageLinks()
   const allComponents = await writeComponentsData()
+  const allDocs = await writeDocsData()
   const allHooks = await writeHooksData()
   const allUtils = await writeUtilsData()
   const allLinks = {
     Components: allComponents.map((component) => ({
       name: component.name,
       slug: `/components/${component.slug}`,
+    })),
+    Docs: allDocs.map((doc) => ({
+      name: doc.name,
+      slug: `/docs/${doc.slug}`,
     })),
     Hooks: allHooks.map((hook) => ({
       name: hook.name,

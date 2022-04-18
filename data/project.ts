@@ -16,6 +16,8 @@ export const componentsSourceFile = project.addSourceFileAtPath(
   'components/index.ts'
 )
 
+export const docsSourceFiles = project.addSourceFilesAtPaths('docs/**/*.mdx')
+
 export const hooksSourceFile = project.addSourceFileAtPath('hooks/index.ts')
 
 export const utilsSourceFile = project.addSourceFileAtPath('utils/index.ts')

@@ -20,7 +20,7 @@ export default function Component({ component }) {
         <code>import {`{ ${component.name} }`} from 'components'</code>
         <h1>{component.name}</h1>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {component.readme && (
+          {component.mdx && (
             <MDXProvider
               components={{
                 ...Object.fromEntries(
@@ -44,7 +44,7 @@ export default function Component({ component }) {
                 },
               }}
             >
-              <CompiledComponent codeString={component.readme?.code} />
+              <CompiledComponent codeString={component.mdx?.code} />
             </MDXProvider>
           )}
         </div>

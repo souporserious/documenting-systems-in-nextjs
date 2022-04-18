@@ -16,14 +16,14 @@ export async function getComponents() {
 async function getDirectoryDocs(directory: Directory) {
   const path = directory.getPath()
   const name = directory.getBaseName()
-  const readme = await getReadme(path)
+  const mdx = await getReadme(path)
   const examples = await getExamples(directory)
   const types = getDocs(directory)
 
   /** Append component prop type links to headings data. */
-  if (readme?.data && types.length > 0) {
-    readme.data.headings = [
-      ...readme.data.headings,
+  if (mdx?.data && types.length > 0) {
+    mdx.data.headings = [
+      ...mdx.data.headings,
       {
         slug: `#props`,
         level: 2,
@@ -39,7 +39,7 @@ async function getDirectoryDocs(directory: Directory) {
 
   return {
     name,
-    readme,
+    mdx,
     types,
     examples,
     slug: kebabCase(name),
