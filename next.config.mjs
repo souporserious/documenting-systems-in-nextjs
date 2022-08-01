@@ -20,6 +20,13 @@ export default withRemoteRefresh({
         filename: 'static/wasm/[modulehash].wasm',
       },
     })
+
+    // Tree shake barrel exports
+    config.module.rules.push({
+      test: [/(components|hooks|theme|utils)\/index.ts/i],
+      sideEffects: false,
+    })
+
     return config
   },
 })
