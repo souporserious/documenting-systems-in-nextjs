@@ -6,12 +6,31 @@ import { getDocs } from './get-docs'
 import { getPageLinks } from './get-page-links'
 import { getHooks } from './get-hooks'
 import { getUtils } from './get-utils'
-import {
-  componentsSourceFile,
-  hooksSourceFile,
-  project,
-  utilsSourceFile,
-} from './project'
+import { Project } from 'ts-morph'
+
+export const project = new Project({
+  compilerOptions: {
+    noEmit: false,
+    declaration: true,
+    emitDeclarationOnly: true,
+  },
+  tsConfigFilePath: 'tsconfig.json',
+  skipAddingFilesFromTsConfig: true,
+})
+
+export const typeChecker = project.getTypeChecker()
+
+export const docsSourceFiles = project.addSourceFilesAtPaths('docs/**/*.mdx')
+
+export const componentsSourceFile = project.addSourceFileAtPath(
+  'components/index.ts'
+)
+
+export const hooksSourceFile = project.addSourceFileAtPath('hooks/index.ts')
+
+export const utilsSourceFile = project.addSourceFileAtPath('utils/index.ts')
+
+project.resolveSourceFileDependencies()
 
 const DEBUG = process.argv.includes('--debug')
 const cacheDirectory = '.data'

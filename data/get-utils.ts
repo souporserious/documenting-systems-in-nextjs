@@ -1,7 +1,7 @@
 import { kebabCase } from 'case-anything'
 import { Node } from 'ts-morph'
 import { getTypes } from './get-types'
-import { utilsSourceFile } from './project'
+import { utilsSourceFile } from './index'
 import { transformCode } from './transform-code'
 
 export async function getUtils() {

@@ -5,7 +5,7 @@ import urlSlug from 'url-slug'
 import { getComponentTypes } from './get-component-types'
 import { getExamples } from './get-examples'
 import { getReadme } from './get-readme'
-import { componentsSourceFile } from './project'
+import { componentsSourceFile } from './index'
 
 export async function getComponents() {
   const sourceDirectories = componentsSourceFile.getDirectory().getDirectories()

@@ -1,6 +1,6 @@
 import { kebabCase } from 'case-anything'
 import { parseMDX } from './parse-mdx'
-import { docsSourceFiles } from './project'
+import { docsSourceFiles } from './index'
 
 export async function getDocs() {
   const allMDXDocs = await Promise.all(

@@ -4,7 +4,7 @@ import type {
   PropertySignature,
 } from 'ts-morph'
 import { Node, TypeFormatFlags } from 'ts-morph'
-import { typeChecker } from './project'
+import { typeChecker } from './index'
 
 export function getComponentTypes(declaration: Node) {
   const signatures = declaration.getType().getCallSignatures()

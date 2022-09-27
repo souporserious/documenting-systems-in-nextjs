@@ -1,7 +1,7 @@
 import { kebabCase } from 'case-anything'
 import { Node } from 'ts-morph'
 import { transformCode } from './transform-code'
-import { hooksSourceFile } from './project'
+import { hooksSourceFile } from './index'
 
 export async function getHooks() {
   const allHooks = await Promise.all(
