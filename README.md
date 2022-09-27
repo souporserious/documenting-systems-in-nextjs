@@ -27,10 +27,10 @@ This repo is an example of how to document a system of components, hooks, utilit
 ## Development
 
 ```bash
-yarn install
-yarn dev
+pnpm install
+pnpm dev
 ```
 
 This will start the development servers. One server handles gathering and caching the data while the other is a NextJS server that serves the site.
 
-When debugging data gathering, you can use the `yarn dev:data --debug` command to start the data server in debug mode.
+When debugging data gathering, you can use the `pnpm dev:data --debug` command to start the data server in debug mode.

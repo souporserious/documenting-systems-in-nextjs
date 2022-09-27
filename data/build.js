@@ -38,7 +38,7 @@ function executeBuildCommand() {
     child.kill()
   }
   child = spawn(
-    'yarn',
+    'pnpm',
     ['build:data', getOption('watch'), getOption('debug')].filter(Boolean),
     { stdio: 'inherit' }
   )
