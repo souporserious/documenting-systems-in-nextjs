@@ -61,7 +61,7 @@ export default function Component({ component }) {
                   {doc.path && (
                     <a href={getSourceLink({ path: doc.path })}>View Source</a>
                   )}
-                  {doc.props.map((type) => (
+                  {doc.props?.map((type) => (
                     <div
                       key={type.name}
                       style={{
