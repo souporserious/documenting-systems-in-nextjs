@@ -53,7 +53,7 @@ async function transformReadme(path) {
   let data = null
   const examples = []
   const workingDirectory = dirname(path)
-  const xdmOptions: Parameters<typeof mdx>[0] = {
+  const mdxOptions: Parameters<typeof mdx>[0] = {
     providerImportSource: '@mdx-js/react',
     remarkPlugins: [
       remarkFrontmatter,
@@ -78,7 +78,7 @@ async function transformReadme(path) {
     bundle: true,
     write: false,
     minify: process.env.NODE_ENV === 'production',
-    plugins: [mdx(xdmOptions)],
+    plugins: [mdx(mdxOptions)],
     external: ['react', 'react-dom', '@mdx-js/react'],
   })
   const bundledReadme = new StringDecoder('utf-8').write(

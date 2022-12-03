@@ -3,7 +3,7 @@ import { transformSync } from '@swc/core'
 
 import { options } from './transform-code'
 
-// https://github.com/wooorm/xdm#syntax-highlighting-with-the-meta-field
+// https://github.com/wooorm/xdm/tree/3.3.4#syntax-highlighting-with-the-meta-field
 const re = /\b([-\w]+)(?:=(?:"([^"]*)"|'([^']*)'|([^"'\s]+)))?/g
 
 export function rehypeMetaPlugin() {

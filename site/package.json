@@ -53,7 +53,6 @@
     "url-slug": "^3.0.4",
     "use-isomorphic-layout-effect": "^1.1.2",
     "use-item-list": "^0.1.2",
-    "xdm": "^3.3.1",
     "yaml": "^2.1.1"
   }
 }
