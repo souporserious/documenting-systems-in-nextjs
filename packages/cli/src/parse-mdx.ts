@@ -3,6 +3,7 @@ import matter from 'gray-matter'
 import { dirname, resolve } from 'node:path'
 import { StringDecoder } from 'node:string_decoder'
 import type { AsyncReturnType } from 'type-fest'
+import { config } from './config'
 
 import { getHeadingsFromMarkdown } from './get-headings-from-markdown'
 import { rehypeMetaPlugin } from './rehype-meta-plugin'
@@ -46,7 +47,7 @@ async function transformReadme(path) {
     remarkFrontmatter = (await import('remark-frontmatter')).default
   }
   if (highlighter === null) {
-    highlighter = await getHighlighter(resolve(process.cwd(), 'src/theme.json'))
+    highlighter = await getHighlighter(config.themePath)
   }
 
   let data = null

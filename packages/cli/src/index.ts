@@ -1,16 +1,19 @@
+#!/bin/env node
+
 import chokidar from 'chokidar'
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { performance } from 'node:perf_hooks'
 import { Project } from 'ts-morph'
 
+import { config } from './config'
 import { getComponents } from './get-components'
 import { getDocs } from './get-docs'
 import { getPageLinks } from './get-page-links'
 import { getHooks } from './get-hooks'
 import { getUtils } from './get-utils'
 
-const basePath = resolve(__dirname, '../../../site')
+const basePath = config.basePath || process.cwd()
 
 export const project = new Project({
   compilerOptions: {

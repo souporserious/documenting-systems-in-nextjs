@@ -1,0 +1,10 @@
+{
+  "name": "docs",
+  "scripts": {
+    "dev": "node ../cli/dist index.ts",
+    "build": "node ../cli/dist index.ts"
+  },
+  "dependencies": {
+    "cli": "workspace:*"
+  }
+}
