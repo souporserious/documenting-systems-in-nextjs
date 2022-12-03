@@ -28,7 +28,7 @@ This repo is an example of how to document a system of components, hooks, utilit
 
 ```bash
 // pnpm workspace bin workaround https://github.com/pnpm/pnpm/issues/1801
-mkdir packages/cli/dist && touch packages/cli/dist/index.js
+mkdir packages/docgen/dist && touch packages/docgen/dist/index.js
 pnpm install
 pnpm dev
 ```

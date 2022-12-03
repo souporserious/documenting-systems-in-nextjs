@@ -1,8 +1,8 @@
 {
-  "name": "cli",
+  "name": "docgen",
   "private": true,
   "bin": {
-    "cli": "dist/index.js"
+    "docgen": "dist/index.js"
   },
   "scripts": {
     "build": "tsup src/index.ts --format cjs --legacy-output",

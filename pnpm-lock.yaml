@@ -40,7 +40,7 @@ importers:
       turbo: 1.6.3
       typescript: 4.9.3
 
-  packages/cli:
+  packages/docgen:
     specifiers:
       '@mdx-js/esbuild': ^2.1.5
       '@swc/core': ^1.3.21
@@ -80,9 +80,9 @@ importers:
 
   packages/docs:
     specifiers:
-      cli: workspace:*
+      docgen: workspace:*
     dependencies:
-      cli: link:../cli
+      docgen: link:../docgen
 
   site:
     specifiers:
