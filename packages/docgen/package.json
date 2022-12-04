@@ -1,11 +1,10 @@
 {
   "name": "docgen",
   "private": true,
-  "bin": {
-    "docgen": "dist/index.js"
-  },
+  "version": "0.0.0",
+  "main": "dist/index.js",
   "scripts": {
-    "build": "tsup src/index.ts --format cjs --legacy-output",
+    "build": "tsup src/index.ts --format cjs",
     "dev": "pnpm build -- --watch --sourcemap"
   },
   "dependencies": {

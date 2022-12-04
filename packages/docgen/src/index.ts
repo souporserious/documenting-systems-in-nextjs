@@ -46,10 +46,11 @@ export const utilsSourceFile = project.addSourceFileAtPath(
 project.resolveSourceFileDependencies()
 
 const DEBUG = process.argv.includes('--debug')
-const cacheDirectoryPath = resolve(basePath, '.data')
+const outputDirectoryPath = resolve(basePath, '.data')
+// const outputDirectoryPath = resolve(process.cwd(), 'dist')
 
-if (!existsSync(cacheDirectoryPath)) {
-  mkdirSync(cacheDirectoryPath)
+if (!existsSync(outputDirectoryPath)) {
+  mkdirSync(outputDirectoryPath)
 }
 
 async function writeComponentsData() {
@@ -65,7 +66,7 @@ async function writeComponentsData() {
   }
 
   writeFileSync(
-    `${cacheDirectoryPath}/components.ts`,
+    `${outputDirectoryPath}/components.ts`,
     `export const allComponents = ${JSON.stringify(allComponents, null, 2)}`
   )
 
@@ -80,7 +81,7 @@ async function writeHooksData() {
   }
 
   writeFileSync(
-    `${cacheDirectoryPath}/hooks.ts`,
+    `${outputDirectoryPath}/hooks.ts`,
     `export const allHooks = ${JSON.stringify(allHooks, null, 2)}`
   )
 
@@ -95,7 +96,7 @@ async function writeUtilsData() {
   }
 
   writeFileSync(
-    `${cacheDirectoryPath}/utils.ts`,
+    `${outputDirectoryPath}/utils.ts`,
     `export const allUtils = ${JSON.stringify(allUtils, null, 2)}`
   )
 
@@ -114,7 +115,7 @@ async function writeTypesData() {
   }
 
   writeFileSync(
-    `${cacheDirectoryPath}/types.ts`,
+    `${outputDirectoryPath}/types.ts`,
     `export const allTypes = ${JSON.stringify(declarationFiles, null, 2)}`
   )
 }
@@ -127,7 +128,7 @@ async function writeDocsData() {
   }
 
   writeFileSync(
-    `${cacheDirectoryPath}/docs.ts`,
+    `${outputDirectoryPath}/docs.ts`,
     `export const allDocs = ${JSON.stringify(allDocs, null, 2)}`
   )
 
@@ -165,13 +166,13 @@ async function writeData() {
 
   /** Create links for each data set. This keeps the client import lightweight. */
   writeFileSync(
-    `${cacheDirectoryPath}/links.ts`,
+    `${outputDirectoryPath}/links.ts`,
     `export const allLinks = ${JSON.stringify(allLinks, null, 2)}`
   )
 
   /** Create a barrel export for each data set. */
   writeFileSync(
-    `${cacheDirectoryPath}/index.ts`,
+    `${outputDirectoryPath}/index.ts`,
     ['components', 'hooks', 'utils', 'links', 'types']
       .map((name) => `export * from './${name}'`)
       .join('\n')
