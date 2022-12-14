@@ -1,0 +1,11 @@
+{
+  "name": "docs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node ../docgen/dist index.ts",
+    "build": "node ../docgen/dist index.ts"
+  },
+  "dependencies": {
+    "docgen": "workspace:*"
+  }
+}
