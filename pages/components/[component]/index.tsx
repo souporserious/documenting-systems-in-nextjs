@@ -29,9 +29,12 @@ export default function Component({ component }) {
                   )
                 ),
                 pre: (props) => {
-                  if (props.children.props.playground !== undefined) {
+                  // @ts-expect-error
+                  const childProps = props.children?.props
+
+                  if (childProps.playground !== undefined) {
                     const { children, codeString, compiledCodeString } =
-                      props.children.props
+                      childProps
                     return (
                       <Playground
                         code={children}
@@ -61,7 +64,7 @@ export default function Component({ component }) {
                   {doc.path && (
                     <a href={getSourceLink({ path: doc.path })}>View Source</a>
                   )}
-                  {doc.props.map((type) => (
+                  {doc.props?.map((type) => (
                     <div
                       key={type.name}
                       style={{
@@ -102,14 +105,12 @@ export default function Component({ component }) {
               <Link
                 key={name}
                 href={`${component.slug}/examples/${slug}`}
-                passHref
+                style={{ display: 'flex', fontSize: 32, padding: 16 }}
               >
-                <a style={{ display: 'flex', fontSize: 32, padding: 16 }}>
-                  <iframe
-                    src={`${component.slug}/examples/${slug}`}
-                    style={{ pointerEvents: 'none' }}
-                  />
-                </a>
+                <iframe
+                  src={`${component.slug}/examples/${slug}`}
+                  style={{ pointerEvents: 'none' }}
+                />
               </Link>
             ))}
           </>

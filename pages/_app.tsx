@@ -19,8 +19,8 @@ function Nav({ children }) {
 function NavLink({ to, children }) {
   return (
     <li>
-      <Link href={to} passHref>
-        <a style={{ display: 'flex', fontSize: 18, padding: 8 }}>{children}</a>
+      <Link href={to} style={{ display: 'flex', fontSize: 18, padding: 8 }}>
+        {children}
       </Link>
     </li>
   )
@@ -82,35 +82,33 @@ export default function App({ Component, pageProps }) {
           >
             {previousRoute && (
               <li style={{ gridColumn: 1 }}>
-                <Link href={previousRoute.slug} passHref>
-                  <a
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'start',
-                      gap: 8,
-                    }}
-                  >
-                    <div>Previous</div>
-                    <div>{previousRoute.name}</div>
-                  </a>
+                <Link
+                  href={previousRoute.slug}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'start',
+                    gap: 8,
+                  }}
+                >
+                  <div>Previous</div>
+                  <div>{previousRoute.name}</div>
                 </Link>
               </li>
             )}
             {nextRoute && (
               <li style={{ gridColumn: 2 }}>
-                <Link href={nextRoute.slug} passHref>
-                  <a
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'end',
-                      gap: 8,
-                    }}
-                  >
-                    <div>Next</div>
-                    <div>{nextRoute.name}</div>
-                  </a>
+                <Link
+                  href={nextRoute.slug}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'end',
+                    gap: 8,
+                  }}
+                >
+                  <div>Next</div>
+                  <div>{nextRoute.name}</div>
                 </Link>
               </li>
             )}

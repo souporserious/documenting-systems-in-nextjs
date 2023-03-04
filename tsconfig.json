@@ -18,7 +18,7 @@
       "components": ["components/index.ts"],
       "hooks": ["hooks/index.ts"],
       "utils": ["utils/index.ts"],
-      "theme": ["theme/*"]
+      "theme/*": ["theme/*"]
     },
     "incremental": true
   },

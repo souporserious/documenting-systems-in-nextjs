@@ -10,8 +10,12 @@ export default function Components() {
       </Head>
       <h1>Components</h1>
       {allComponents.map(({ name, slug }) => (
-        <Link key={name} href={`components/${slug}`} passHref>
-          <a style={{ display: 'flex', fontSize: 32, padding: 16 }}>{name}</a>
+        <Link
+          key={name}
+          href={`components/${slug}`}
+          style={{ display: 'flex', fontSize: 32, padding: 16 }}
+        >
+          {name}
         </Link>
       ))}
     </>

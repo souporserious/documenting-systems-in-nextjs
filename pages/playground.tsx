@@ -40,8 +40,8 @@ export default function Playground() {
         <nav
           style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
         >
-          <Link href="/" passHref>
-            <a style={{ display: 'flex', fontSize: 18, padding: 8 }}>👻</a>
+          <Link href="/" style={{ display: 'flex', fontSize: 18, padding: 8 }}>
+            👻
           </Link>
           <h2>Examples</h2>
           <ul
