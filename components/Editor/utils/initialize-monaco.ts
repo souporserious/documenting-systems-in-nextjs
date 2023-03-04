@@ -31,8 +31,11 @@ export async function initializeMonaco({
   fontSize = 18,
   onOpenEditor = () => null,
 }: InitializeMonacoOptions) {
+  // @ts-expect-error
+  const { default: onigasmPath } = await import('onigasm/lib/onigasm.wasm')
+
   try {
-    await loadWASM('/onigasm.wasm')
+    await loadWASM(onigasmPath)
   } catch {
     // try/catch prevents onigasm from erroring on fast refreshes
   }
@@ -121,7 +124,7 @@ export async function initializeMonaco({
    */
   defineTheme(monaco, theme)
 
-  await wireTmGrammars(monaco, registry, grammars)
+  await wireTmGrammars(monaco, registry, grammars, editor)
 
   return editor
 }

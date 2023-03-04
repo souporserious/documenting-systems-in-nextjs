@@ -47,6 +47,7 @@
     "monaco-editor-textmate": "^4.0.0",
     "monaco-textmate": "^3.0.1",
     "next": "^13.2.3",
+    "next-remote-refresh": "^0.10.0",
     "onigasm": "^2.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
