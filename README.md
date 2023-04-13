@@ -1,6 +1,6 @@
-# Documenting Systems In NextJS
+# Documenting Systems In Next.js
 
-This repo is an example of how to document a system of components, hooks, utilities, and themes in [NextJS](https://nextjs.org/) using [TS Morph](https://ts-morph.com/).
+This repo is an example of how to document a system of components, hooks, utilities, and themes in [Next.js](https://nextjs.org/) using [TS Morph](https://ts-morph.com/).
 
 ## Features
 
